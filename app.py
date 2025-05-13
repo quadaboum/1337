@@ -44,6 +44,11 @@ def login():
         if user and bcrypt.checkpw(password, user[1].encode('utf-8')):
             session["user_id"] = user[0]
             session["pseudo"] = pseudo
+            cur.execute("UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s", (request.remote_addr, request.headers.get('User-Agent'), user[0]))
+            conn.commit()
+            return redirect("/dashboard" if pseudo == "Topaz" else "/menu")
+            session["user_id"] = user[0]
+            session["pseudo"] = pseudo
         cur.execute("UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s", (request.remote_addr, request.headers.get("User-Agent"), user[0]))
         conn.commit()
             return redirect("/dashboard" if pseudo == "Topaz" else "/menu")
