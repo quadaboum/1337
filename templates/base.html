@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}La Voie de l'Éclipse{% endblock %}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background-color: #0c0c0c;
+            color: #f2f2f2;
+        }
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: -250px;
+            background-color: #1a1a1a;
+            padding-top: 60px;
+            transition: 0.3s;
+            overflow-x: hidden;
+            z-index: 1;
+        }
+        .sidebar a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 1.1em;
+            color: #f2f2f2;
+            display: block;
+            transition: 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #333;
+        }
+        .openbtn {
+            font-size: 1.5em;
+            cursor: pointer;
+            background-color: #111;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
+        }
+        #main {
+            margin-left: 0;
+            transition: margin-left 0.3s;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    {% if session.get("user_id") %}
+    <button class="openbtn" onclick="toggleSidebar()">☰</button>
+    <div id="mySidebar" class="sidebar">
+        <a href="/"><span>🏠</span> Accueil</a>
+        <a href="/missions"><span>🧠</span> Missions</a>
+        <a href="/boutique"><span>🛒</span> Boutique</a>
+        <a href="/livre"><span>📜</span> Livre</a>
+        <a href="/lore"><span>⚡</span> Lore</a>
+        {% if session.get("pseudo") == "Topaz" %}
+        <a href="/dashboard"><span>⚙️</span> Dashboard</a>
+        {% endif %}
+        <a href="/logout"><span>🚪</span> Déconnexion</a>
+    </div>
+    {% endif %}
+    <div id="main">
+        {% block content %}{% endblock %}
+    </div>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById("mySidebar");
+            const main = document.getElementById("main");
+            if (sidebar.style.left === "0px") {
+                sidebar.style.left = "-250px";
+                main.style.marginLeft = "0";
+            } else {
+                sidebar.style.left = "0px";
+                main.style.marginLeft = "250px";
+            }
+        }
+    </script>
+</body>
+</html>
