@@ -1,3 +1,35 @@
+
+@app.route("/init_db")
+def init_db():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                nom TEXT,
+                pseudo TEXT UNIQUE,
+                password TEXT,
+                niveau INTEGER DEFAULT 1,
+                prestige INTEGER DEFAULT 0,
+                argent INTEGER DEFAULT 0,
+                dons INTEGER DEFAULT 0,
+                ip_address TEXT
+            );
+            CREATE TABLE IF NOT EXISTS invitation_codes (
+                id SERIAL PRIMARY KEY,
+                code TEXT UNIQUE,
+                used BOOLEAN DEFAULT FALSE,
+                used_by_user_id INTEGER REFERENCES users(id)
+            );
+        """)
+        conn.commit()
+        cur.close()
+        conn.close()
+        return "Base de données initialisée avec succès."
+    except Exception as e:
+        return f"Erreur lors de l'initialisation : {str(e)}"
+
 from flask import Flask, render_template, request, redirect, session, url_for
 import psycopg2
 import os
