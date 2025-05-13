@@ -6,7 +6,6 @@ import os
 app = Flask(__name__)
 app.secret_key = "topaz_secret_key"
 
-# Connexion à la base PostgreSQL
 def get_db_connection():
     return psycopg2.connect(
         host=os.environ.get("DB_HOST", "localhost"),
@@ -28,17 +27,15 @@ def login():
         cur = conn.cursor()
         cur.execute("SELECT id, niveau FROM users WHERE pseudo=%s AND password=%s", (pseudo, password))
         user = cur.fetchone()
-        conn.close()
         if user:
             session["user_id"] = user[0]
-            conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute("UPDATE users SET ip_address = %s WHERE id = %s", (request.remote_addr, user[0]))
-            conn.commit()
-            cur.close()
-            conn.close()
             session["pseudo"] = pseudo
             session["niveau"] = user[1]
+            cur.execute("UPDATE users SET ip_address = %s WHERE id = %s", (request.remote_addr, user[0]))
+            conn.commit()
+        cur.close()
+        conn.close()
+        if user:
             return redirect("/dashboard" if pseudo == "Topaz" else "/missions")
     return render_template("login.html")
 
@@ -72,7 +69,7 @@ def dashboard():
     if "pseudo" in session and session["pseudo"] == "Topaz":
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT pseudo, niveau, prestige, argent FROM users")
+        cur.execute("SELECT pseudo, niveau, prestige, argent, ip_address FROM users")
         users = cur.fetchall()
         cur.execute("SELECT code, used FROM invitation_codes")
         codes = cur.fetchall()
@@ -115,4 +112,5 @@ def lore():
     return render_template("lore.html")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
