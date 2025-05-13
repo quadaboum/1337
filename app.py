@@ -42,19 +42,11 @@ def login():
         cur.execute("SELECT id, password FROM users WHERE pseudo = %s", (pseudo,))
         user = cur.fetchone()
         if user and bcrypt.checkpw(password, user[1].encode('utf-8')):
-            session["user_id"] = user[0]
-            session["pseudo"] = pseudo
+            session['user_id'] = user[0]
+            session['pseudo'] = pseudo
             cur.execute("UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s", (request.remote_addr, request.headers.get('User-Agent'), user[0]))
             conn.commit()
-            return redirect("/dashboard" if pseudo == "Topaz" else "/menu")
-            session["user_id"] = user[0]
-            session["pseudo"] = pseudo
-        cur.execute("UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s", (request.remote_addr, request.headers.get("User-Agent"), user[0]))
-        conn.commit()
-            return redirect("/dashboard" if pseudo == "Topaz" else "/menu")
-        return "Échec de connexion"
-    return render_template("login.html")
-
+            return redirect('/dashboard' if pseudo == 'Topaz' else '/menu')
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -77,16 +69,13 @@ def register():
             user_id = cur.fetchone()[0]
             cur.execute("UPDATE invitation_codes SET used=TRUE, used_by_user_id=%s WHERE id=%s", (user_id, code_data[0]))
             conn.commit()
-            session["user_id"] = user_id
-            session["pseudo"] = pseudo
-        cur.execute("UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s", (request.remote_addr, request.headers.get("User-Agent"), user[0]))
-        conn.commit()
+            session['user_id'] = user_id
+            session['pseudo'] = pseudo
+            cur.execute("UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s", (request.remote_addr, request.headers.get('User-Agent'), user_id))
+            conn.commit()
             cur.close()
             conn.close()
-            return redirect("/dashboard" if pseudo == "Topaz" else "/menu")
-        return "Clé invalide"
-    return render_template("register.html")
-
+            return redirect('/dashboard' if pseudo == 'Topaz' else '/menu')
 @app.route("/dashboard")
 def dashboard():
     if session.get("pseudo") != "Topaz":
