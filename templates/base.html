@@ -51,6 +51,12 @@
             transition: margin-left 0.3s;
             padding: 20px;
         }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -70,19 +76,12 @@
     {% endif %}
     <div id="main">
         {% block content %}{% endblock %}
-    </div>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById("mySidebar");
-            const main = document.getElementById("main");
-            if (sidebar.style.left === "0px") {
-                sidebar.style.left = "-250px";
-                main.style.marginLeft = "0";
-            } else {
-                sidebar.style.left = "0px";
-                main.style.marginLeft = "250px";
-            }
-        }
-    </script>
+        
+<footer>
+    © Voie de l’Éclipse — <strong>Le Commencement — Ver. 2.0</strong><br>
+    <span>Ceci est un jeu/projet fictif. Aucune incitation réelle.</span>
+</footer>
+
+</div>
 </body>
 </html>

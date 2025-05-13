@@ -1,7 +1,102 @@
 
-{% extends 'base.html' %}
-{% block title %}Accueil{% endblock %}
-{% block content %}
-    <h1>Bienvenue sur la Voie de l'Éclipse</h1>
-    <p>Tu as trouvé le portail. Le vide te guide.</p>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>La Voie de l'Éclipse</title>
+    <style>
+        @keyframes glitch {
+            0% { text-shadow: 2px 2px red; }
+            20% { text-shadow: -2px -2px blue; }
+            40% { text-shadow: 2px -2px lime; }
+            60% { text-shadow: -2px 2px magenta; }
+            80% { text-shadow: 1px -1px cyan; }
+            100% { text-shadow: 0 0 1px #fff; }
+        }
+
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        body {
+            background-color: #000;
+            color: #f2f2f2;
+            font-family: 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 40px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ff4444;
+            margin-bottom: 30px;
+            animation: glitch 1s infinite;
+        }
+
+        p {
+            max-width: 700px;
+            font-size: 1.1rem;
+            margin-bottom: 50px;
+        }
+
+        .button-container {
+            border-right: .15em solid #d6af36;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+            animation:
+                typewriter 5s steps(60, end) forwards,
+                blink 0.75s step-end infinite;
+        }
+
+        .cta-button {
+            background-color: #d6af36;
+            color: black;
+            padding: 14px 28px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 0.8rem;
+            color: #888;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>ENTRÉE INTERDITE AUX NON-INITIÉS</h1>
+    <p>
+        Ce site fictif explore la sexualité rituelle, les meurtres symboliques, les hallucinations, les drogues interdites et la dissolution de l’égo.  
+        Accéder, c’est renoncer. Fuir, c’est vivre. Mais il est déjà trop tard.
+    </p>
+    <div class="button-container">
+        <a class="cta-button" href="/disclaimer">
+            Je cède mon âme à Topaz, pour l'éternité, sans possibilité de revenir en arrière.
+        </a>
+    </div>
+    
+<footer>
+    © Voie de l’Éclipse — <strong>Le Commencement — Ver. 2.0</strong><br>
+    <span>Ceci est un jeu/projet fictif. Aucune incitation réelle.</span>
+</footer>
+
+</body>
+</html>
