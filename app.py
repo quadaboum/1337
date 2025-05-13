@@ -1,64 +1,118 @@
 
 from flask import Flask, render_template, request, redirect, session, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
-import psycopg2, os
+import psycopg2
+import os
 
 app = Flask(__name__)
-app.secret_key = 'eclipse_pgsql_secret'
+app.secret_key = "topaz_secret_key"
 
-def get_db():
-    return psycopg2.connect(os.environ['DATABASE_URL'], sslmode='require')
+# Connexion à la base PostgreSQL
+def get_db_connection():
+    return psycopg2.connect(
+        host=os.environ.get("DB_HOST", "localhost"),
+        database=os.environ.get("DB_NAME", "voie_eclipse"),
+        user=os.environ.get("DB_USER", "postgres"),
+        password=os.environ.get("DB_PASS", "password")
+    )
 
-@app.route('/')
+@app.route("/")
 def index():
-    if 'username' in session:
-        return redirect(url_for('dashboard'))
-    return render_template('index.html')
+    return render_template("index.html")
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        code = request.form['invite_code']
-        db = get_db()
-        cur = db.cursor()
-        cur.execute('SELECT * FROM invites WHERE code = %s AND used = FALSE', (code,))
-        invite = cur.fetchone()
-        if invite:
-            if username.lower() == 'topaz':
-                return 'Ce nom est réservé.'
-            hashed = generate_password_hash(password)
-            cur.execute('INSERT INTO users (username, password) VALUES (%s, %s)', (username, hashed))
-            cur.execute('UPDATE invites SET used = TRUE, used_by = %s WHERE code = %s', (username, code))
-            db.commit()
-            cur.close()
-            return redirect(url_for('login'))
-        return 'Code invalide ou déjà utilisé.'
-    return render_template('register.html')
-
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
-        cur = db.cursor()
-        cur.execute('SELECT * FROM users WHERE username = %s', (username,))
+    if request.method == "POST":
+        pseudo = request.form["pseudo"]
+        password = request.form["password"]
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT id, niveau FROM users WHERE pseudo=%s AND password=%s", (pseudo, password))
         user = cur.fetchone()
-        cur.close()
-        if user and check_password_hash(user[2], password):
-            session['username'] = username
-            return redirect(url_for('dashboard'))
-        return 'Identifiants incorrects.'
-    return render_template('login.html')
+        conn.close()
+        if user:
+            session["user_id"] = user[0]
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute("UPDATE users SET ip_address = %s WHERE id = %s", (request.remote_addr, user[0]))
+            conn.commit()
+            cur.close()
+            conn.close()
+            session["pseudo"] = pseudo
+            session["niveau"] = user[1]
+            return redirect("/dashboard" if pseudo == "Topaz" else "/missions")
+    return render_template("login.html")
 
-@app.route('/dashboard')
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        nom = request.form["nom"]
+        code = request.form["code"]
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM invitation_codes WHERE code=%s AND used=FALSE", (code,))
+        code_data = cur.fetchone()
+        if code_data:
+            cur.execute("INSERT INTO users (nom, pseudo, password, niveau) VALUES (%s, %s, %s, %s)",
+                        (nom, 'Nouveau-' + code[:5], 'defaultpass', 1))
+            user_id = cur.lastrowid
+            cur.execute("UPDATE invitation_codes SET used=TRUE, used_by_user_id=%s WHERE id=%s", (user_id, code_data[0]))
+            conn.commit()
+            conn.close()
+            return redirect("/login")
+        conn.close()
+    return render_template("register.html")
+
+@app.route("/dashboard")
 def dashboard():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    return render_template('dashboard.html', user=session['username'])
+    if "pseudo" in session and session["pseudo"] == "Topaz":
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT pseudo, niveau, prestige, argent FROM users")
+        users = cur.fetchall()
+        cur.execute("SELECT code, used FROM invitation_codes")
+        codes = cur.fetchall()
+        conn.close()
+        return render_template("dashboard.html", users=users, codes=codes)
+    return redirect("/login")
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+@app.route("/missions")
+def missions():
+    if "user_id" in session:
+        return render_template("missions.html")
+    return redirect("/login")
+
+@app.route("/boutique")
+def boutique():
+    if "user_id" in session:
+        return render_template("boutique.html")
+    return redirect("/login")
+
+@app.route("/livre")
+def livre():
+    return render_template("livre.html")
+
+@app.route("/testament")
+def testament():
+    if "user_id" in session:
+        return render_template("testament.html")
+    return redirect("/login")
+
+@app.route("/commandements")
+def commandements():
+    return render_template("commandements.html")
+
+@app.route("/dons")
+def dons():
+    return render_template("dons.html")
+
+@app.route("/lore")
+def lore():
+    return render_template("lore.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)
