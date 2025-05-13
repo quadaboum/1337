@@ -1,102 +1,60 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>La Voie de l'Éclipse</title>
+    <title>La Voie de l'Éclipse - Accueil</title>
     <style>
-        @keyframes glitch {
-            0% { text-shadow: 2px 2px red; }
-            20% { text-shadow: -2px -2px blue; }
-            40% { text-shadow: 2px -2px lime; }
-            60% { text-shadow: -2px 2px magenta; }
-            80% { text-shadow: 1px -1px cyan; }
-            100% { text-shadow: 0 0 1px #fff; }
-        }
-
-        @keyframes typewriter {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        @keyframes blink {
-            50% { border-color: transparent; }
-        }
-
         body {
-            background-color: #000;
-            color: #f2f2f2;
-            font-family: 'Georgia', serif;
+            margin: 0;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            font-family: "Courier New", monospace;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             height: 100vh;
-            padding: 40px;
-            overflow: hidden;
+            background-image: radial-gradient(circle at center, #1a1a1a, #000000);
             text-align: center;
         }
-
         h1 {
-            font-size: 2.5rem;
+            font-size: 2em;
             color: #ff4444;
-            margin-bottom: 30px;
-            animation: glitch 1s infinite;
         }
-
         p {
-            max-width: 700px;
-            font-size: 1.1rem;
-            margin-bottom: 50px;
+            max-width: 600px;
+            margin: 1em auto;
         }
-
-        .button-container {
-            border-right: .15em solid #d6af36;
-            white-space: nowrap;
-            overflow: hidden;
-            width: 0;
-            animation:
-                typewriter 5s steps(60, end) forwards,
-                blink 0.75s step-end infinite;
+        .warning-btn {
+            background-color: #ff0000;
+            border: none;
+            color: white;
+            padding: 1em 2em;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 1em;
+            transition: all 0.3s ease;
         }
-
-        .cta-button {
-            background-color: #d6af36;
-            color: black;
-            padding: 14px 28px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1rem;
-            border-radius: 5px;
-            display: inline-block;
-            margin-top: 20px;
+        .warning-btn:hover {
+            background-color: #cc0000;
+            transform: scale(1.05);
         }
-
-        footer {
+        .footer {
             position: absolute;
             bottom: 10px;
-            font-size: 0.8rem;
-            color: #888;
-            text-align: center;
+            font-size: 0.8em;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <h1>ENTRÉE INTERDITE AUX NON-INITIÉS</h1>
-    <p>
-        Ce site fictif explore la sexualité rituelle, les meurtres symboliques, les hallucinations, les drogues interdites et la dissolution de l’égo.  
-        Accéder, c’est renoncer. Fuir, c’est vivre. Mais il est déjà trop tard.
-    </p>
-    <div class="button-container">
-        <a class="cta-button" href="/disclaimer">
-            Je cède mon âme à Topaz, pour l'éternité, sans possibilité de revenir en arrière.
-        </a>
-    </div>
-    
-<footer>
-    © Voie de l’Éclipse — <strong>Le Commencement — Ver. 2.0</strong><br>
-    <span>Ceci est un jeu/projet fictif. Aucune incitation réelle.</span>
-</footer>
-
+    <h1>⚠️ AVERTISSEMENT -18 ANS ⚠️</h1>
+    <p>Ce site contient du contenu fictif à caractère violent, sexuel, ésotérique et dérangeant.<br>
+    En cliquant ci-dessous, vous acceptez de céder votre âme à Topaz pour l’éternité.<br>
+    Et de renoncer à vos proches, vos biens et votre libre arbitre. Bonne chance.</p>
+    <button class="warning-btn" onclick="window.location.href='/disclaimer'">
+        Je cède mon âme à Topaz, pour l'éternité, sans possibilité de revenir en arrière.
+    </button>
+    <div class="footer">© La Voie de l'Éclipse – Ceci est un projet fictif</div>
 </body>
 </html>
