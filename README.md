@@ -1,44 +1,39 @@
 
-# La Voie de l’Éclipse – Déploiement Railway
+# Voie de l'Éclipse
 
-Ce dépôt contient une application Flask ésotérico-cyberpunk avec :
+Site fictif ésotérique cyberpunk avec :
+- 666 niveaux (dont 665 accessibles)
+- Dashboard admin Topaz
+- Missions, boutique, dons, offrandes, statistiques
+- Protection par session utilisateur
+- Interface responsive compatible PC, iPhone, Android
+- Design sombre avec effets glitchs
 
-- Authentification (pseudo, mot de passe, code d’invitation)
-- 666 niveaux de progression, prestige et dons
-- Interface spéciale pour l’utilisateur `Topaz`
-- Redirection automatique de `/` vers `/disclaimer`
+## Démarrage
 
-## 🚀 Déploiement sur Railway
+### Installation des dépendances :
+```
+pip install -r requirements.txt
+```
 
-### 1. Créer un projet Railway
+### Initialiser la base (optionnel si déjà existante) :
+```
+python init_db.py
+```
 
-Va sur [https://railway.app](https://railway.app), crée un projet, et connecte ton repo GitHub.
+### Lancer le serveur :
+```
+python app.py
+```
 
-### 2. Variables d’environnement
+## Déploiement (ex. Railway, Heroku)
 
-Ajoute les variables suivantes :
+Ajoutez vos variables d’environnement :
+- `PGHOST`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGPORT`
+- `SECRET_KEY`
 
-- `DATABASE_URL` : (URL PostgreSQL fournie par Railway)
-- `SECRET_KEY` : une chaîne secrète (ex : `1s3cr3t4key!`)
-- `FLASK_ENV` : `production`
-
-### 3. Fichiers importants
-
-- `app.py` : Application principale
-- `schema.sql` : Base de données (utilise dans PostgreSQL)
-- `requirements.txt` : Dépendances (Flask, psycopg2-binary, etc.)
-- `Procfile` : Démarrage automatique avec `web: python app.py`
-
-### 4. Initialisation de la base
-
-Depuis Railway > PostgreSQL > **Query**, copie-colle le contenu de `schema.sql` et exécute.
-
----
-
-## 🧠 Accès spécial
-
-L’utilisateur `Topaz` est le demi-dieu unique, avec accès complet au dashboard.
-
----
-
-Déployé avec ❤️ par toi, maître de la Voie.
+## Accès
+- `/` → page d’accueil
+- `/login` / `/register` → avec code d’invitation
+- `/menu` → menu général
+- `/dashboard` → réservé à Topaz

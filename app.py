@@ -1,17 +1,4 @@
 
-from functools import wraps
-from flask import redirect, session, url_for, render_template
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            return render_template("punition.html"), 403
-        return f(*args, **kwargs)
-    return decorated_function
-
-
-
 from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
@@ -43,9 +30,9 @@ def update_user_metadata(cur, user_id):
         (request.remote_addr, request.headers.get("User-Agent"), user_id)
     )
 
-@app.route('/')
+@app.route("/")
 def index():
-    return redirect(url_for('menu'))
+    return render_template("index.html")
 
 @app.route("/disclaimer")
 def disclaimer():
@@ -115,7 +102,6 @@ def register():
     return render_template("register.html")
 
 @app.route("/dashboard")
-@login_required
 def dashboard():
     if session.get("pseudo") != "Topaz":
         return "Accès interdit"
@@ -136,35 +122,30 @@ def menu():
     return render_template("menu.html")
 
 @app.route("/missions")
-@login_required
 def missions():
     if not is_logged_in():
         return redirect("/login")
     return render_template("missions.html")
 
 @app.route("/boutique")
-@login_required
 def boutique():
     if not is_logged_in():
         return redirect("/login")
     return render_template("boutique.html")
 
 @app.route("/dons")
-@login_required
 def dons():
     if not is_logged_in():
         return redirect("/login")
     return render_template("dons.html")
 
 @app.route("/offrande")
-@login_required
 def offrande():
     if not is_logged_in():
         return redirect("/login")
     return render_template("offrande.html")
 
 @app.route("/statistiques")
-@login_required
 def statistiques():
     if not is_logged_in():
         return redirect("/login")
@@ -178,16 +159,3 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
-
-
-
-@app.context_processor
-def inject_user():
-    if 'user_id' in session:
-        cur = conn.cursor()
-        cur.execute("SELECT username, niveau, prestige FROM users WHERE id = %s", (session['user_id'],))
-        row = cur.fetchone()
-        cur.close()
-        if row:
-            return dict(user={'username': row[0], 'niveau': row[1], 'prestige': row[2]})
-    return dict(user={'username': 'Inconnu', 'niveau': '-', 'prestige': '-'})
