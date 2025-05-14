@@ -12,9 +12,9 @@
         <ul>
             <li><a href="{{ url_for('missions') }}">Missions</a></li>
             <li><a href="{{ url_for('boutique') }}">Boutique</a></li>
-            <li><a href="{{ url_for('don') }}">Don</a></li>
-            <li><a href="{{ url_for('offrandes') }}">Offrandes</a></li>
-            <li><a href="{{ url_for('stats') }}">Statistiques</a></li>
+            <li><a href="{{ url_for('dons') }}">Don</a></li>
+            <li><a href="{{ url_for('offrande') }}">Offrandes</a></li>
+            <li><a href="{{ url_for('statistiques') }}">Statistiques</a></li>
             {% if session.get('username') == 'Topaz' %}
                 <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
             {% endif %}
