@@ -5,6 +5,22 @@
     <meta charset="UTF-8">
     <title>{% block title %}La Voie de l’Éclipse{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+    body {
+        opacity: 0;
+        transition: opacity 1.5s ease-in;
+    }
+    body.loaded {
+        opacity: 1;
+    }
+</style>
+<script>
+    window.addEventListener("load", () => {
+        document.body.classList.add("loaded");
+    });
+</script>
+
 </head>
 <body>
     <div class="sidebar">
