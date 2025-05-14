@@ -1,1 +1,1 @@
-web: python patch_users_table.py
+web: python dbpatch.py
