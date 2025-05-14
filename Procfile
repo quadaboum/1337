@@ -1,1 +1,1 @@
-web: add_used_invitation_code.py
+web: patch_users_table.py

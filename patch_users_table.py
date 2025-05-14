@@ -16,8 +16,7 @@ def patch_users_table():
     try:
         cur.execute("""
             ALTER TABLE users
-            ADD COLUMN IF NOT EXISTS ip_address TEXT,
-            ADD COLUMN IF NOT EXISTS user_agent TEXT;
+            ADD COLUMN IF NOT EXISTS unique_creation_code TEXT,
         """)
         conn.commit()
         print("✅ Colonnes ajoutées à la table users.")
