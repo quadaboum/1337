@@ -1,1 +1,1 @@
-web: patch_users_table.py
+web: python patch_users_table.py
