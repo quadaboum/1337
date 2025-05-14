@@ -1,1 +1,1 @@
-web: python dbpatch.py
+web: python app.py
