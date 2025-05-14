@@ -164,13 +164,13 @@ if __name__ == "__main__":
 @app.after_request
 def inject_footer(response):
     try:
-        if request.endpoint in ['index', 'login', 'register', 'disclaimer']:
+        if request.endpoint in ['index', 'login', 'register', 'disclaimer' , 'disclaimer']:
             content = response.get_data(as_text=True)
             # Inject CSS
-            css = "<style>footer { position: absolute; bottom: 10px; font-size: 0.8em; color: #666; }</style>"
+            css = "<style>footer { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 0.8em; color: #666; }</style>"
             content = content.replace('</head>', css + '</head>')
             # Inject footer HTML
-            footer_html = "<footer>La Voie de l'Éclipse™ - Ce site n'est pas réel - 2025 ©</footer>"
+            footer_html = "<footer>- La Voie de l'Éclipse™ - Ce site n'est pas réel - 2025 © -</footer>"
             content = content.replace('</body>', footer_html + '</body>')
             response.set_data(content)
     except Exception:
