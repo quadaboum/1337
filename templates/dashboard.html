@@ -82,3 +82,28 @@
     </div>
 </body>
 </html>
+
+<h2>Codes d’invitation</h2>
+<table border="1" style="width:100%; margin-bottom: 20px;">
+  <thead>
+    <tr><th>Code</th><th>Utilisé</th><th>Par</th></tr>
+  </thead>
+  <tbody>
+    {% for c in codes %}
+    <tr>
+      <td>{{ c.code }}</td>
+      <td>{{ 'Oui' if c.used else 'Non' }}</td>
+      <td>{{ c.used_by if c.used_by else '-' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<button id="generate">Générer un nouveau code</button>
+<script>
+document.getElementById("generate").addEventListener("click", () => {
+    fetch("/generate_code", {method: "POST"})
+      .then(res => res.json())
+      .then(data => location.reload());
+});
+</script>
