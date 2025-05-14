@@ -159,3 +159,22 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+
+
+@app.after_request
+def inject_footer(response):
+    try:
+        if request.endpoint in ['index', 'login', 'register', 'disclaimer']:
+            content = response.get_data(as_text=True)
+            # Inject CSS
+            css = "<style>footer { position: absolute; bottom: 10px; font-size: 0.8em; color: #666; }</style>"
+            content = content.replace('</head>', css + '</head>')
+            # Inject footer HTML
+            footer_html = "<footer>La Voie de l'Éclipse™ - Ce site n'est pas réel - 2025 ©</footer>"
+            content = content.replace('</body>', footer_html + '</body>')
+            response.set_data(content)
+    except Exception:
+        pass
+    return response
+
+from flask import request
