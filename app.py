@@ -159,38 +159,3 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
-
-
-@app.route('/punition')
-def punition():
-    return render_template('punition.html')
-
-import random
-import string
-from flask import jsonify
-
-def generate_invite_code(length=16):
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
-
-@app.route('/generate_code', methods=['POST'])
-def generate_code():
-    if 'username' not in session or session['username'] != 'Topaz':
-        return redirect(url_for('punition'))
-
-    code = generate_invite_code()
-    cur = conn.cursor()
-    cur.execute("INSERT INTO invitation_codes (code) VALUES (%s)", (code,))
-    conn.commit()
-    cur.close()
-    return jsonify({'code': code})
-
-@app.route('/dashboard')
-def dashboard():
-    if 'username' not in session or session['username'] != 'Topaz':
-        return redirect(url_for('punition'))
-
-    cur = conn.cursor()
-    cur.execute("SELECT code, used, used_by FROM invitation_codes ORDER BY id DESC")
-    codes = [{'code': row[0], 'used': row[1], 'used_by': row[2]} for row in cur.fetchall()]
-    cur.close()
-    return render_template('dashboard.html', codes=codes)
