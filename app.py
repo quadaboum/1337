@@ -178,3 +178,46 @@ def inject_footer(response):
     return response
 
 from flask import request
+
+app.config['VERSION'] = 'v2.5a'
+
+VERSION_STYLE = """
+<style>
+  #app-version {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.8em;
+    color: #666;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 1000;
+  }
+</style>
+"""
+
+FOOTER_HTML = f'<div id="app-version">{app.config["VERSION"]}</div>'
+
+@app.after_request
+def inject_version(response):
+    content_type = response.headers.get('Content-Type', '')
+    if content_type.startswith('text/html'):
+        html = response.get_data(as_text=True)
+        html = html.replace('</head>', VERSION_STYLE + '</head>')
+        html = html.replace('</body>', FOOTER_HTML + '</body>')
+        response.set_data(html)
+    return response
+
+@app.before_request
+def log_request_info():
+    print(f"[{app.config['VERSION']}] ➜ {request.method} {request.path}")
+
+@app.route('/version')
+def version():
+    return {'version': app.config['VERSION']}
+
+if __name__ == '__main__':
+    print(f"🔧 Démarrage de la Voie de l'Éclipse – Version {app.config['VERSION']}")
+    app.run(debug=True)
