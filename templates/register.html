@@ -67,5 +67,26 @@
         &copy; Voie de l'Éclipse<br>
         <a href="/menu" style="color:#ff0055;">Retour au menu</a>
     </div>
+
+<button id="betray" class="btn-dark">Trahir son honneur</button>
+<script>
+document.getElementById("betray").addEventListener("click", function () {
+    document.body.classList.add("strobe-effect");
+    setTimeout(() => {
+        window.location.href = "/disclaimer";
+    }, 600);
+});
+</script>
+<style>
+@keyframes strobe {
+  0%, 100% { background-color: black; }
+  10%, 30%, 50%, 70%, 90% { background-color: white; }
+  20%, 40%, 60%, 80% { background-color: red; }
+}
+.strobe-effect {
+  animation: strobe 0.6s linear;
+}
+</style>
+
 </body>
 </html>
