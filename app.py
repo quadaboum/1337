@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
@@ -55,7 +56,7 @@ def login():
             return redirect(url_for('dashboard') if pseudo == "Topaz" else url_for('menu'))
         cur.close()
         conn.close()
-        return "Échec de connexion"
+        return "Traversée du portail astral refusée !"
     return render_template("login.html")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -119,6 +120,36 @@ def dashboard():
 @app.route("/menu")
 def menu():
     return render_template("menu.html")
+
+@app.route("/missions")
+def missions():
+    if not is_logged_in():
+        return redirect("/login")
+    return render_template("missions.html")
+
+@app.route("/boutique")
+def boutique():
+    if not is_logged_in():
+        return redirect("/login")
+    return render_template("boutique.html")
+
+@app.route("/dons")
+def dons():
+    if not is_logged_in():
+        return redirect("/login")
+    return render_template("dons.html")
+
+@app.route("/offrande")
+def offrande():
+    if not is_logged_in():
+        return redirect("/login")
+    return render_template("offrande.html")
+
+@app.route("/statistiques")
+def statistiques():
+    if not is_logged_in():
+        return redirect("/login")
+    return render_template("statistiques.html")
 
 @app.route("/logout")
 def logout():

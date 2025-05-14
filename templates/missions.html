@@ -1,19 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% extends 'base.html' %}
-{% block title %}Missions{% endblock %}
-{% block content %}
-<h1>Missions rituelles</h1>
-<ul>
-    <li>Mission 1 : Contempler le vide</li>
-    <li>Mission 2 : Éteindre la lumière pendant 6h</li>
-    <li>Mission 3 : Manger dans le silence</li>
-</ul>
-{% endblock %}
+    <meta charset="UTF-8">
+    <title>Missions - Voie de l'Éclipse</title>
+    <style>
+        body {
+            background-color: #0e0e0e;
+            color: #f5f5f5;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 40px;
+        }
+        h1 {
+            color: #ff0055;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .content {
+            max-width: 800px;
+            margin: auto;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        .section {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 0 10px #000;
+        }
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+        }
+    
+@media only screen and (max-width: 768px) {
+    body {
+        padding: 20px;
+    }
+    .content {
+        padding: 10px;
+        font-size: 15px;
+    }
+    .section {
+        padding: 15px;
+    }
+}
 
-<footer>
-    © Voie de l’Éclipse — <strong>Le Commencement — Ver. 2.0</strong><br>
-    <span>Ceci est un jeu/projet fictif. Aucune incitation réelle.</span>
-</footer>
+</style>
+</head>
+<body>
+    <h1>Missions</h1>
+    <div class="content">
+        <div class="section">
+            <p>Les missions sont des actes de transgression et de dévotion. Chaque action vous élève et vous marque. Vous ne pouvez en accomplir que celles qui correspondent à votre niveau.</p>
+            <ul>
+                <li>Niveau 1 : Observer la douleur d'un autre en silence</li>
+                <li>Niveau 2 : Écrire vos regrets sur un mur public</li>
+                <li>Niveau 3 : Brûler symboliquement un souvenir</li>
+                <li>Niveau 5 : Voler un objet inutile mais interdit</li>
+                <li>Niveau 8 : Mentir à un proche au nom de la Voie</li>
+            </ul>
+        </div>
+        <div class="footer">&copy; Voie de l'Éclipse – Ceci est un projet fictif.</div>
+    
+<div style="text-align: center; margin-top: 40px;">
+    <a href="/menu" style="color: #ff0055; text-decoration: none; font-weight: bold;">← Retour au menu</a>
+</div>
 
+</div>
 </body>
 </html>
