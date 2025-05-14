@@ -1,3 +1,4 @@
+Version : v2.5b
 
 # Voie de l'Éclipse
 
@@ -37,3 +38,13 @@ Ajoutez vos variables d’environnement :
 - `/login` / `/register` → avec code d’invitation
 - `/menu` → menu général
 - `/dashboard` → réservé à Topaz
+
+
+## Changelog
+
+### v2.5b
+- Lecture dynamique de la version via `version.txt`
+- Interface `/set_version` pour Topaz
+- Badge de version affiché sur toutes les pages HTML
+- Menu latéral restreint à l’admin Topaz uniquement
+- Option de création de codes d’invitation via interface

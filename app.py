@@ -1,3 +1,12 @@
+def load_version():
+    try:
+        with open('version.txt', 'r') as f:
+            return f.read().strip()
+    except Exception:
+        return 'version inconnue'
+
+app.config['VERSION'] = load_version()
+
 
 from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -179,7 +188,7 @@ def inject_footer(response):
 
 from flask import request
 
-app.config['VERSION'] = 'v2.5a'
+
 
 VERSION_STYLE = """
 <style>
