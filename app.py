@@ -159,3 +159,16 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+
+
+
+@app.context_processor
+def inject_user():
+    if 'user_id' in session:
+        cur = conn.cursor()
+        cur.execute("SELECT username, niveau, prestige FROM users WHERE id = %s", (session['user_id'],))
+        row = cur.fetchone()
+        cur.close()
+        if row:
+            return dict(user={'username': row[0], 'niveau': row[1], 'prestige': row[2]})
+    return dict(user={'username': 'Inconnu', 'niveau': '-', 'prestige': '-'})

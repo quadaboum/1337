@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}La Voie de l’Éclipse{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="{{ url_for('missions') }}">Missions</a></li>
+            <li><a href="{{ url_for('boutique') }}">Boutique</a></li>
+            <li><a href="{{ url_for('don') }}">Don</a></li>
+            <li><a href="{{ url_for('offrandes') }}">Offrandes</a></li>
+            <li><a href="{{ url_for('stats') }}">Statistiques</a></li>
+            {% if session.get('username') == 'Topaz' %}
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+        </ul>
+        <div class="user-info">
+            <p><strong>Utilisateur :</strong> {{ user.username }}</p>
+            <p><strong>Niveau :</strong> {{ user.niveau }}</p>
+            <p><strong>Prestige :</strong> {{ user.prestige }}</p>
+        </div>
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
