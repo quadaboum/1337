@@ -30,9 +30,9 @@ def update_user_metadata(cur, user_id):
         (request.remote_addr, request.headers.get("User-Agent"), user_id)
     )
 
-@app.route("/")
+@app.route('/')
 def index():
-    return render_template("index.html")
+    return redirect(url_for('disclaimer'))
 
 @app.route("/disclaimer")
 def disclaimer():

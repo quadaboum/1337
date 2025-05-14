@@ -1,39 +1,44 @@
 
-# Voie de l'Éclipse
+# La Voie de l’Éclipse – Déploiement Railway
 
-Site fictif ésotérique cyberpunk avec :
-- 666 niveaux (dont 665 accessibles)
-- Dashboard admin Topaz
-- Missions, boutique, dons, offrandes, statistiques
-- Protection par session utilisateur
-- Interface responsive compatible PC, iPhone, Android
-- Design sombre avec effets glitchs
+Ce dépôt contient une application Flask ésotérico-cyberpunk avec :
 
-## Démarrage
+- Authentification (pseudo, mot de passe, code d’invitation)
+- 666 niveaux de progression, prestige et dons
+- Interface spéciale pour l’utilisateur `Topaz`
+- Redirection automatique de `/` vers `/disclaimer`
 
-### Installation des dépendances :
-```
-pip install -r requirements.txt
-```
+## 🚀 Déploiement sur Railway
 
-### Initialiser la base (optionnel si déjà existante) :
-```
-python init_db.py
-```
+### 1. Créer un projet Railway
 
-### Lancer le serveur :
-```
-python app.py
-```
+Va sur [https://railway.app](https://railway.app), crée un projet, et connecte ton repo GitHub.
 
-## Déploiement (ex. Railway, Heroku)
+### 2. Variables d’environnement
 
-Ajoutez vos variables d’environnement :
-- `PGHOST`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGPORT`
-- `SECRET_KEY`
+Ajoute les variables suivantes :
 
-## Accès
-- `/` → page d’accueil
-- `/login` / `/register` → avec code d’invitation
-- `/menu` → menu général
-- `/dashboard` → réservé à Topaz
+- `DATABASE_URL` : (URL PostgreSQL fournie par Railway)
+- `SECRET_KEY` : une chaîne secrète (ex : `1s3cr3t4key!`)
+- `FLASK_ENV` : `production`
+
+### 3. Fichiers importants
+
+- `app.py` : Application principale
+- `schema.sql` : Base de données (utilise dans PostgreSQL)
+- `requirements.txt` : Dépendances (Flask, psycopg2-binary, etc.)
+- `Procfile` : Démarrage automatique avec `web: python app.py`
+
+### 4. Initialisation de la base
+
+Depuis Railway > PostgreSQL > **Query**, copie-colle le contenu de `schema.sql` et exécute.
+
+---
+
+## 🧠 Accès spécial
+
+L’utilisateur `Topaz` est le demi-dieu unique, avec accès complet au dashboard.
+
+---
+
+Déployé avec ❤️ par toi, maître de la Voie.
