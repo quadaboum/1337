@@ -1,1 +1,1 @@
-web: python app_topaz_creator.py
+web: python app.py

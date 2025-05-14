@@ -20,14 +20,9 @@ def is_logged_in():
 
 @app.before_request
 def restrict_pages():
-    if not is_logged_in() and request.endpoint not in ['index', 'login', 'register', 'disclaimer', 'static']:
+    open_routes = ['index', 'login', 'register', 'disclaimer', 'static']
+    if not is_logged_in() and request.endpoint not in open_routes:
         return redirect(url_for('login'))
-
-def update_user_metadata(cur, user_id):
-    cur.execute(
-        "UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s",
-        (request.remote_addr, request.headers.get("User-Agent"), user_id)
-    )
 
 @app.route("/")
 def index():
@@ -46,13 +41,19 @@ def login():
         cur = conn.cursor()
         cur.execute("SELECT id, password FROM users WHERE pseudo = %s", (pseudo,))
         row = cur.fetchone()
-        if row and check_password_hash(row[1], password):
-            session["user_id"], session["pseudo"] = row[0], pseudo
-            update_user_metadata(cur, row[0])
-            conn.commit()
-            cur.close()
-            conn.close()
-            return redirect(url_for('dashboard') if pseudo == "Topaz" else url_for('menu'))
+        if row:
+            user_id, hashed_pw = row
+            if check_password_hash(hashed_pw, password):
+                session["user_id"] = user_id
+                session["pseudo"] = pseudo
+                cur.execute(
+                    "UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s",
+                    (request.remote_addr, request.headers.get("User-Agent"), user_id)
+                )
+                conn.commit()
+                cur.close()
+                conn.close()
+                return redirect(url_for('dashboard') if pseudo == "Topaz" else url_for('menu'))
         cur.close()
         conn.close()
         return "Échec de connexion"
@@ -66,40 +67,37 @@ def register():
         code = request.form["code"]
         conn = get_db_connection()
         cur = conn.cursor()
-
         cur.execute("SELECT id FROM users WHERE pseudo = %s", (pseudo,))
         if cur.fetchone():
             cur.close()
             conn.close()
             return "Pseudo déjà utilisé"
-
         cur.execute("SELECT id FROM invitation_codes WHERE code = %s AND used = FALSE", (code,))
         code_row = cur.fetchone()
         if not code_row:
             cur.close()
             conn.close()
             return "Clé invalide"
-
         hashed_pw = generate_password_hash(password)
         cur.execute(
-            "INSERT INTO users (nom, pseudo, password, niveau) VALUES (%s, %s, %s, 1)",
-            (pseudo, pseudo, hashed_pw)
+            "INSERT INTO users (nom, pseudo, password, niveau) VALUES (%s, %s, %s, %s)",
+            (pseudo, pseudo, hashed_pw, 1)
         )
         conn.commit()
-
         cur.execute("SELECT id FROM users WHERE pseudo = %s", (pseudo,))
         user_id = cur.fetchone()[0]
-
         cur.execute(
             "UPDATE invitation_codes SET used = TRUE, used_by_user_id = %s WHERE id = %s",
             (user_id, code_row[0])
         )
-        update_user_metadata(cur, user_id)
         conn.commit()
-
+        cur.execute(
+            "UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s",
+            (request.remote_addr, request.headers.get("User-Agent"), user_id)
+        )
+        conn.commit()
         cur.close()
         conn.close()
-
         session["user_id"] = user_id
         session["pseudo"] = pseudo
         return redirect(url_for('dashboard') if pseudo == "Topaz" else url_for('menu'))
