@@ -5,9 +5,6 @@ def load_version():
     except Exception:
         return 'version inconnue'
 
-app.config['VERSION'] = load_version()
-
-
 from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2

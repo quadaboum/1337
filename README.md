@@ -12,11 +12,60 @@ Site fictif ésotérique cyberpunk avec :
 
 ## Démarrage
 
-### Installation des dépendances :
-```
-pip install -r requirements.txt
-```
+### Installation
 
+### ✅ En local (VPS, Linux, macOS, WSL...)
+
+1. **Cloner le dépôt :**
+   ```bash
+   git clone <ton_repo_git>
+   cd ton_repo_git
+   ```
+
+2. **Créer un environnement virtuel et l’activer :**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+3. **Installer les dépendances :**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Lancer l’application Flask :**
+   ```bash
+   python app.py
+   ```
+   Accède à l’application sur [http://localhost:5000](http://localhost:5000)
+
+---
+
+### ☁️ Sur Railway
+
+1. **Créer un nouveau projet Railway :** [https://railway.app](https://railway.app)
+
+2. **Déployer un projet depuis GitHub.**
+
+3. **Configurer les variables d’environnement :**
+   - `FLASK_ENV=production`
+   - (Autres variables personnalisées selon besoin)
+
+4. **Railway détectera automatiquement :**
+   - `requirements.txt` (Python)
+   - `Procfile` avec :  
+     ```
+     web: python app.py
+     ```
+
+5. **Connexion PostgreSQL** *(si utilisé)* :
+   - Ajoute Railway PostgreSQL à ton projet
+   - Récupère les variables `PGHOST`, `PGUSER`, `PGPASSWORD`, etc.
+   - Configure la chaîne de connexion dans `app.py`
+
+---
+
+🎉 Tu peux maintenant accéder à ton site déployé depuis Railway, ou en local sur ton VPS.
 ### Initialiser la base (optionnel si déjà existante) :
 ```
 python init_db.py
