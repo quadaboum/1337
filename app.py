@@ -4,6 +4,7 @@ from flask import Flask, render_template, redirect, url_for, session, request, f
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from sqlalchemy import text
 
 # 🔍 Debug output for Railway
 print("🚀 Booting app.py")
@@ -64,8 +65,6 @@ def current_user():
     if "user_id" in session:
         return User.query.get(session["user_id"])
     return None
-
-from sqlalchemy import text
 
 @app.route("/health")
 def health():
