@@ -246,17 +246,3 @@ def version():
 if __name__ == '__main__':
     print(f"🔧 Démarrage de la Voie de l'Éclipse – Version {app.config['VERSION']}")
     app.run(debug=True)
-@app.route("/delete_user/<int:user_id>", methods=["DELETE"])
-def delete_user(user_id):
-    if not is_logged_in() or session.get("pseudo") != "Topaz":
-        return {"success": False, "error": "Unauthorized"}, 401
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return {"success": True}
-    except Exception as e:
-        return {"success": False, "error": str(e)}, 500
