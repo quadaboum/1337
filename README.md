@@ -90,6 +90,13 @@ Ajoutez vos variables d’environnement :
 
 
 ## Changelog
+### v3.0
+- Refactor complet du code
+- Décorateur admin mutualisé
+- Injection version/footer/warning centralisée
+- Templates unifiés et sécurisés
+- README, scripts, et logique PostgreSQL propres
+
 
 ### v2.5b
 - Lecture dynamique de la version via `version.txt`
