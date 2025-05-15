@@ -1,17 +1,12 @@
-
 from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 import os
 
-# Initialisation de l'application Flask
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "topaz_secret_key")
 
-# --- Fonctions Utilitaires ---
-
 def get_db_connection():
-    """Connexion sécurisée à la base PostgreSQL via variables d'environnement."""
     return psycopg2.connect(
         host=os.environ.get("PGHOST"),
         database=os.environ.get("PGDATABASE"),
@@ -23,16 +18,16 @@ def get_db_connection():
 def is_logged_in():
     return "user_id" in session
 
-def is_admin():
-    return session.get("pseudo") == "Topaz"
-
 @app.before_request
 def restrict_pages():
-    allowed_routes = ['index', 'login', 'register', 'disclaimer', 'static']
-    if not is_logged_in() and request.endpoint not in allowed_routes:
+    if not is_logged_in() and request.endpoint not in ['index', 'login', 'register', 'disclaimer', 'static']:
         return redirect(url_for('login'))
 
-# --- Routes Publiques ---
+def update_user_metadata(cur, user_id):
+    cur.execute(
+        "UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s",
+        (request.remote_addr, request.headers.get("User-Agent"), user_id)
+    )
 
 @app.route("/")
 def index():
@@ -51,17 +46,18 @@ def login():
         cur = conn.cursor()
         cur.execute("SELECT id, password FROM users WHERE pseudo = %s", (pseudo,))
         row = cur.fetchone()
+        print(f"Tentative de connexion : {pseudo} / {password}")
+        print(f"En base : {row}")
         if row and check_password_hash(row[1], password):
             session["user_id"], session["pseudo"] = row[0], pseudo
-            cur.execute("UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s",
-                        (request.remote_addr, request.headers.get("User-Agent"), row[0]))
+            update_user_metadata(cur, row[0])
             conn.commit()
             cur.close()
             conn.close()
-            return redirect(url_for("dashboard") if pseudo == "Topaz" else url_for("menu"))
+            return redirect(url_for('dashboard') if pseudo == "Topaz" else url_for('menu'))
         cur.close()
         conn.close()
-        return "Traversée du portail astral refusée !"
+        return "Échec de connexion"
     return render_template("login.html")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -86,85 +82,50 @@ def register():
             conn.close()
             return "Clé invalide"
         hashed_pw = generate_password_hash(password)
-        cur.execute("INSERT INTO users (nom, pseudo, password, niveau, used_invitation_code) VALUES (%s, %s, %s, %s, %s)",
-                    (pseudo, pseudo, hashed_pw, 1, code))
+        cur.execute(
+            "INSERT INTO users (nom, pseudo, password, niveau, used_invitation_code) VALUES (%s, %s, %s, %s, %s)",
+            (pseudo, pseudo, hashed_pw, 1, code)
+        )
         conn.commit()
         cur.execute("SELECT id FROM users WHERE pseudo = %s", (pseudo,))
         user_id = cur.fetchone()[0]
-        cur.execute("UPDATE invitation_codes SET used = TRUE, used_by_user_id = %s WHERE id = %s",
-                    (user_id, code_row[0]))
+        cur.execute(
+            "UPDATE invitation_codes SET used = TRUE, used_by_user_id = %s WHERE id = %s",
+            (user_id, code_row[0])
+        )
+        update_user_metadata(cur, user_id)
         conn.commit()
         cur.close()
         conn.close()
         session["user_id"] = user_id
         session["pseudo"] = pseudo
-        return redirect(url_for("dashboard") if pseudo == "Topaz" else url_for("menu"))
+        return redirect(url_for('dashboard') if pseudo == "Topaz" else url_for('menu'))
     return render_template("register.html")
-
-# --- Routes Utilisateur ---
-
-@app.route("/menu")
-def menu():
-    return render_template("menu.html")
-
-@app.route("/missions")
-def missions():
-    return render_template("missions.html")
-
-@app.route("/boutique")
-def boutique():
-    return render_template("boutique.html")
-
-@app.route("/dons")
-def dons():
-    return render_template("dons.html")
-
-@app.route("/offrande")
-def offrande():
-    return render_template("offrande.html")
-
-@app.route("/statistiques")
-def statistiques():
-    return render_template("statistiques.html")
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("index"))
-
-# --- Route Admin Sécurisée ---
 
 @app.route("/dashboard")
 def dashboard():
-    if not is_admin():
-        return render_template("unauthorized.html")
+    if session.get("pseudo") != "Topaz":
+        return "Accès interdit"
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT id, pseudo, niveau, prestige, argent, dons, ip_address, user_agent, used_invitation_code FROM users")
     users = cur.fetchall()
-    cur.execute("SELECT code, used, (SELECT pseudo FROM users WHERE id = invitation_codes.used_by_user_id) FROM invitation_codes")
+    cur.execute(
+        "SELECT code, used, (SELECT pseudo FROM users WHERE id = invitation_codes.used_by_user_id) FROM invitation_codes"
+    )
     codes = cur.fetchall()
     cur.close()
     conn.close()
     return render_template("dashboard.html", users=users, codes=codes)
 
-# --- Footer Automatique sur pages publiques ---
+@app.route("/menu")
+def menu():
+    return render_template("menu.html")
 
-@app.after_request
-def inject_footer(response):
-    try:
-        if request.endpoint in ['index', 'login', 'register', 'disclaimer']:
-            content = response.get_data(as_text=True)
-            css = "<style>footer { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 0.8em; color: #666; }</style>"
-            footer_html = "<footer>- La Voie de l'Éclipse™ - Ce site n'est pas réel - 2025 © -</footer>"
-            content = content.replace("</head>", css + "</head>")
-            content = content.replace("</body>", footer_html + "</body>")
-            response.set_data(content)
-    except Exception:
-        pass
-    return response
-
-# --- Lancement local ---
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
