@@ -155,3 +155,43 @@ Ajoutez vos variables d’environnement :
 ## Version v3.2b
 - Suppression du footer et lien inutile dans disclaimer.html
 - Ajout du lien 'Bafouer son honneur' stylisé sur login.html et register.html
+
+
+## Version v3.2b
+- Suppression du lien 'Bafouer son honneur' et du footer dans disclaimer.html
+
+
+## Version v3.2b
+- Suppression du footer statique dans disclaimer
+- Footer versionné dynamique basé sur version.txt dans toutes les pages
+- Injection automatique de {{ version }} dans les templates via context_processor
+
+
+## Version v3.2b
+- Footer déplacé hors du body dans une vraie balise <footer>
+- Suppression des doublons dans disclaimer.html
+- Version dynamique injectée avec Flask ({{ version }}) via context_processor
+
+
+## Version v3.2b
+- Footer déplacé hors du body avec version dynamique depuis version.txt
+- Supprimé footer en double dans disclaimer.html
+- Lien vers le menu principal dans le footer avec style constant (#666)
+- Ajout d’un lien Dashboard visible uniquement par Topaz dans le menu
+
+
+## Version v3.2b
+- Suppression des éléments statiques dans disclaimer
+- Footer dynamique déplacé dans <footer>
+- Texte 'Revenir au menu principal' stylé en bas du footer
+- Footer lié dynamiquement à version.txt
+- Lien admin vers dashboard réservé à Topaz ajouté dans menu
+- Affichage du menu aussi dans /dashboard.html
+
+
+## Version v3.2b
+- Footer déplacé dans <footer> en bas de chaque page
+- Footer dynamique avec version lue depuis version.txt
+- Lien vers menu/disclaimer stylisé dans footer
+- Suppression des doublons dans disclaimer.html
+- Menu avec lien spécial dashboard visible uniquement par Topaz

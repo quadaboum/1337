@@ -112,7 +112,8 @@
         <a href="/dons">Dons</a>
         <a href="/offrande">Offrande</a>
         <a href="/statistiques">Statistiques</a>
-        <a href="/logout">Se déconnecter</a>
+        {% if user[2] == "Topaz" %}<a href="/dashboard">Dashboard</a>{% endif %}
+<a href="/logout">Se déconnecter</a>
     </div>
 
     <div class="content">
@@ -125,7 +126,20 @@
 
 
 
-<div style="text-align:center;"><a href="{{ url_for('menu') }}">Revenir au menu principal</a></div>
-<div style="text-align:center; font-size: 0.8em; color: #666;">© La Voie de l'Éclipse – Ceci est un site fictif – v3.1d 2025 –</div>
+
+
+
+
+
+
+
+<footer style="text-align:center; font-size: 0.8em; color: #666;">
+    <div><a href="{{ url_for('menu') }}" style="font-size: 0.8em; color: #666;">Revenir au menu principal</a></div>
+    <div>© La Voie de l'Éclipse – Ceci est un site fictif – v3.2b 2025 –</div>
+</footer>
+
 </body>
+
+
+
 </html>

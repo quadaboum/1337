@@ -1,3 +1,6 @@
+with open("version.txt") as f:
+    current_version = f.read().strip()
+
 
 from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -39,11 +42,11 @@ def restrict_pages():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", version=current_version, version=current_version)
 
 @app.route("/disclaimer")
 def disclaimer():
-    return render_template("disclaimer.html")
+    return render_template("disclaimer.html", version=current_version, version=current_version)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -65,7 +68,7 @@ def login():
         cur.close()
         conn.close()
         return "Traversée du portail astral refusée !"
-    return render_template("login.html")
+    return render_template("login.html", version=current_version, version=current_version)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -102,13 +105,13 @@ def register():
         session["user_id"] = user_id
         session["pseudo"] = pseudo
         return redirect(url_for("dashboard") if pseudo == "Topaz" else url_for("menu"))
-    return render_template("register.html")
+    return render_template("register.html", version=current_version, version=current_version)
 
 # --- Routes Utilisateur ---
 
 @app.route("/menu")
 def menu():
-    return render_template("menu.html")
+    return render_template("menu.html", version=current_version, version=current_version)
 
 @app.route("/missions")
 def missions():
@@ -118,7 +121,7 @@ def missions():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("missions.html", user=user_data)
+    return render_template("missions.html", user=user_data, version=current_version)
 
 
 @app.route("/boutique")
@@ -129,7 +132,7 @@ def boutique():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("boutique.html", user=user_data)
+    return render_template("boutique.html", user=user_data, version=current_version)
 
 
 @app.route("/dons")
@@ -140,7 +143,7 @@ def dons():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("dons.html", user=user_data)
+    return render_template("dons.html", user=user_data, version=current_version)
 
 
 @app.route("/offrande")
@@ -151,7 +154,7 @@ def offrande():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("offrande.html", user=user_data)
+    return render_template("offrande.html", user=user_data, version=current_version)
 
 
 @app.route("/statistiques")
@@ -162,7 +165,7 @@ def statistiques():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("statistiques.html", user=user_data)
+    return render_template("statistiques.html", user=user_data, version=current_version)
 
 
 @app.route("/logout")
@@ -175,7 +178,7 @@ def logout():
 @app.route("/dashboard")
 def dashboard():
     if not is_admin():
-        return render_template("unauthorized.html")
+        return render_template("unauthorized.html", version=current_version, version=current_version)
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT id, pseudo, niveau, prestige, argent, dons, ip_address, user_agent, used_invitation_code FROM users")
@@ -184,7 +187,7 @@ def dashboard():
     codes = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template("dashboard.html", users=users, codes=codes)
+    return render_template("dashboard.html", users=users, codes=codes, version=current_version)
 
 # --- Footer Automatique sur pages publiques ---
 
@@ -207,3 +210,13 @@ def inject_footer(response):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+
+
+@app.context_processor
+def inject_version():
+    try:
+        with open("version.txt", "r") as f:
+            version = f.read().strip()
+    except:
+        version = "inconnue"
+    return dict(version=version)
