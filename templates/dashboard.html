@@ -4,44 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - Voie de l'Éclipse</title>
-    <style>
-        body {
-            background-color: #0e0e0e;
-            color: #f5f5f5;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #ff0055;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 40px;
-        }
-        th, td {
-            border: 1px solid #555;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #1a1a1a;
-            color: #ff0055;
-        }
-        tr:nth-child(even) {
-            background-color: #191919;
-        }
-        tr:hover {
-            background-color: #292929;
-        }
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 12px;
-            color: #777;
-        }
-    </style>
+    
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     {% if username == "Topaz" %}
