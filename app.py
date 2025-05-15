@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # === CONFIGURATION DE BASE ===
 app = Flask(__name__)
@@ -60,3 +63,8 @@ def index():
 # === ROUTES À COMPLÉTER ===
 # Ajouter ici login, register, menu, dashboard, missions, etc.
 
+
+# === POINT D'ENTRÉE ===
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
