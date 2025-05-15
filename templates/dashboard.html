@@ -1,47 +1,8 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard Admin{% endblock %}
+{% block title %}Dashboard – Topaz{% endblock %}
 
 {% block content %}
-<h2>Dashboard Administrateur</h2>
-
-<section>
-  <h3>Résumé Général</h3>
-  <ul>
-    <li>Utilisateurs inscrits : {{ user_count }}</li>
-    <li>Niveau moyen : {{ avg_level }}</li>
-    <li>Prestige moyen : {{ avg_prestige }}</li>
-  </ul>
-</section>
-
-<section>
-  <h3>Derniers inscrits</h3>
-  <ul>
-  {% for user in latest_users %}
-    <li>{{ user.username }} (niveau {{ user.level }}, prestige {{ user.prestige }})</li>
-  {% endfor %}
-  </ul>
-</section>
-
-<section>
-  <h3>Outils d'administration</h3>
-  <form action="{{ url_for('generate_invite') }}" method="post">
-    <button type="submit">Générer une clé d'invitation</button>
-    {% if invite_code %}
-    <p>Clé générée : <strong>{{ invite_code }}</strong></p>
-    {% endif %}
-  </form>
-
-  <form action="{{ url_for('delete_user') }}" method="post">
-    <input type="text" name="username" placeholder="Nom d'utilisateur à supprimer">
-    <button type="submit">Supprimer l'utilisateur</button>
-  </form>
-
-  <form action="{{ url_for('update_user') }}" method="post">
-    <input type="text" name="username" placeholder="Nom d'utilisateur">
-    <input type="number" name="level" placeholder="Nouveau niveau">
-    <input type="number" name="prestige" placeholder="Nouveau prestige">
-    <button type="submit">Mettre à jour</button>
-  </form>
-</section>
+<h2>Dashboard</h2>
+<p>Contenu de la page dashboard à compléter.</p>
 {% endblock %}
