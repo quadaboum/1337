@@ -112,3 +112,23 @@ Ajoutez vos variables d’environnement :
 - Redirection propre vers login si non connecté
 - Nettoyage et commentaires dans app.py
 - CSS global appliqué
+
+
+## Version v3.1c
+- Suppression du footer redondant dans disclaimer
+- Footer dynamique avec version dans toutes les pages
+- Ajout des liens : 'Revenir au menu principal' et 'Bafouer son honneur'
+- dashboard.html réparé et fonctionnel
+- Uniformisation du style CSS sauf menu latéral
+
+
+## Version v3.1d
+- Uniformisation du footer sur toutes les pages
+- Ajout automatique de la version depuis version.txt dans le pied de page
+- Liens cohérents selon les pages (publique : "Bafouer son honneur", privée : "Revenir au menu principal")
+
+
+## Version v3.1d
+- Footer uniformisé dans toutes les pages (publiques et privées)
+- Ajout automatique du lien vers le menu ou vers le disclaimer
+- Footer affichant version.txt et année 2025 à chaque fois
