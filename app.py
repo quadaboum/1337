@@ -12,6 +12,15 @@ app.secret_key = os.environ.get("SECRET_KEY", "topaz_secret_key")
 
 
 # === OUTILS FONCTIONNELS ===
+
+# Rendu avec version auto-injectée
+def render_page(template_name, **kwargs):
+    return render_template(template_name, version=load_version(), **kwargs)
+
+# Vérifie si l'utilisateur connecté est Topaz
+def is_admin():
+    return is_logged_in() and session.get("username") == "Topaz"
+
 def load_version():
     """Charge la version de l'application depuis version.txt."""
     try:
@@ -57,7 +66,7 @@ def restrict_pages():
 # === ROUTES PUBLIQUES ===
 @app.route("/")
 def index():
-    return render_template("index.html", version=load_version())
+    return render_page("index.html")
 
 
 # === ROUTES À COMPLÉTER ===
@@ -68,3 +77,9 @@ def index():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
+@app.route("/dashboard")
+def dashboard():
+    if not is_logged_in() or session.get("username") != "Topaz":
+        return render_page("unauthorized.html"), 403
+    return render_page("dashboard.html")
