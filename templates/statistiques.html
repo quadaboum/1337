@@ -55,6 +55,21 @@
 
 </head>
 <body>
+
+{% if user %}
+<div class="menu">
+    <h2>VOIE DE L'ÉCLIPSE</h2>
+    <div class="stat">Niveau : {{ user[0] }}<br>Prestige : {{ user[1] }}<br>Nom : {{ user[2] }}</div>
+    <a href="/menu">Accueil</a>
+    <a href="/missions">Missions</a>
+    <a href="/boutique">Boutique</a>
+    <a href="/dons">Dons</a>
+    <a href="/offrande">Offrande</a>
+    <a href="/statistiques">Statistiques</a>
+    <a href="/logout">Se déconnecter</a>
+</div>
+{% endif %}
+
     <h1>Statistiques</h1>
     <div class="content">
         <div class="section">

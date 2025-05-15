@@ -132,3 +132,21 @@ Ajoutez vos variables d’environnement :
 - Footer uniformisé dans toutes les pages (publiques et privées)
 - Ajout automatique du lien vers le menu ou vers le disclaimer
 - Footer affichant version.txt et année 2025 à chaque fois
+
+
+## Version v3.1e
+- Correction de la route '/' inaccessible (erreur de endpoint dans before_request)
+- Sécurisation du bloc de restriction d’accès avec fallback robuste
+
+
+## Version v3.1e
+- Redirection par défaut des pages protégées vers index (au lieu de login)
+- Vérification de la route `/` et de l’accessibilité publique
+
+
+## Version v3.2a
+- Correction des redirections (index par défaut)
+- Ajout du menu latéral pour tous les utilisateurs connectés
+- Intégration des données user (niveau, prestige, nom)
+- Style.css appliqué à login et register
+- Page unauthorized.html accessible à tous
