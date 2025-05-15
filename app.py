@@ -1,10 +1,10 @@
 import os
 import secrets
 from flask import Flask, render_template, redirect, url_for, session, request, flash, abort
+from sqlalchemy import text
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from sqlalchemy import text
 
 # 🔍 Debug output for Railway
 print("🚀 Booting app.py")
