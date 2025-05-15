@@ -195,3 +195,8 @@ Ajoutez vos variables d’environnement :
 - Lien vers menu/disclaimer stylisé dans footer
 - Suppression des doublons dans disclaimer.html
 - Menu avec lien spécial dashboard visible uniquement par Topaz
+
+
+## Version v3.2c
+- Correction du bug 'user is undefined' dans toutes les routes utilisateur
+- Passage automatique de la variable 'user' à tous les templates connectés

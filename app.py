@@ -111,7 +111,7 @@ def register():
 
 @app.route("/menu")
 def menu():
-    return render_template("menu.html", version=current_version)
+    return render_template("menu.html", version=current_version, user=user)
 
 @app.route("/missions")
 def missions():
@@ -121,7 +121,7 @@ def missions():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("missions.html", user=user_data, version=current_version)
+    return render_template("missions.html", user=user_data, version=current_version, user=user)
 
 
 @app.route("/boutique")
@@ -132,7 +132,7 @@ def boutique():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("boutique.html", user=user_data, version=current_version)
+    return render_template("boutique.html", user=user_data, version=current_version, user=user)
 
 
 @app.route("/dons")
@@ -143,7 +143,7 @@ def dons():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("dons.html", user=user_data, version=current_version)
+    return render_template("dons.html", user=user_data, version=current_version, user=user)
 
 
 @app.route("/offrande")
@@ -154,7 +154,7 @@ def offrande():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("offrande.html", user=user_data, version=current_version)
+    return render_template("offrande.html", user=user_data, version=current_version, user=user)
 
 
 @app.route("/statistiques")
@@ -165,7 +165,7 @@ def statistiques():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("statistiques.html", user=user_data, version=current_version)
+    return render_template("statistiques.html", user=user_data, version=current_version, user=user)
 
 
 @app.route("/logout")
@@ -187,7 +187,7 @@ def dashboard():
     codes = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template("dashboard.html", users=users, codes=codes, version=current_version)
+    return render_template("dashboard.html", users=users, codes=codes, version=current_version, user=user)
 
 # --- Footer Automatique sur pages publiques ---
 
