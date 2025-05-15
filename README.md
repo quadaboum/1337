@@ -150,3 +150,8 @@ Ajoutez vos variables d’environnement :
 - Intégration des données user (niveau, prestige, nom)
 - Style.css appliqué à login et register
 - Page unauthorized.html accessible à tous
+
+
+## Version v3.2b
+- Suppression du footer et lien inutile dans disclaimer.html
+- Ajout du lien 'Bafouer son honneur' stylisé sur login.html et register.html
