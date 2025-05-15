@@ -121,64 +121,23 @@ def missions():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("missions.html", user=user_data, version=current_version, user=user)
-
-
-@app.route("/boutique")
-def boutique():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
+    return render_template("missions.html", version=current_version, , prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("boutique.html", user=user_data, version=current_version, user=user)
-
-
-@app.route("/dons")
-def dons():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
+    return render_template("boutique.html", version=current_version, , prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("dons.html", user=user_data, version=current_version, user=user)
-
-
-@app.route("/offrande")
-def offrande():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
+    return render_template("dons.html", version=current_version, , prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("offrande.html", user=user_data, version=current_version, user=user)
-
-
-@app.route("/statistiques")
-def statistiques():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
+    return render_template("offrande.html", version=current_version, , prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("statistiques.html", user=user_data, version=current_version, user=user)
-
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("index"))
-
-# --- Route Admin Sécurisée ---
-
-@app.route("/dashboard")
-def dashboard():
-    if not is_admin():
-        return render_template("unauthorized.html", version=current_version)
+    return render_template("statistiques.html", version=current_version, , version=current_version)
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT id, pseudo, niveau, prestige, argent, dons, ip_address, user_agent, used_invitation_code FROM users")
