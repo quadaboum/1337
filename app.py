@@ -111,6 +111,12 @@ def register():
 
 @app.route("/menu")
 def menu():
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
     return render_template("menu.html", version=current_version, user=user)
 
 @app.route("/missions")
@@ -121,6 +127,12 @@ def missions():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
     return render_template("missions.html", user=user, version=current_version)
     user_data = cur.fetchone()
     cur.close()
@@ -179,3 +191,17 @@ def inject_version():
     except:
         version = "inconnue"
     return dict(version=version)
+
+@app.route("/dashboard")
+def dashboard():
+    if not is_logged_in() or session.get("pseudo") != "Topaz":
+        return redirect(url_for("unauthorized"))
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id, pseudo, niveau, prestige, argent, dons, ip_address, user_agent, used_invitation_code FROM users")
+    users = cur.fetchall()
+    cur.execute("SELECT code, used, (SELECT pseudo FROM users WHERE id = invitation_codes.used_by_user_id) FROM invitation_codes")
+    codes = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template("dashboard.html", users=users, codes=codes, user=session.get('pseudo'), version=current_version)
