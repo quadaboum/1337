@@ -2,12 +2,13 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Connexion – Topaz</title>
+    <title>Don – Topaz</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="dark">
-    <div class="centered">
-        <h1>Connexion</h1>
+    {% include "sidebar.html" %}
+    <main>
+        <h1>Faire un don</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             <div class="flash">
@@ -18,14 +19,11 @@
           {% endif %}
         {% endwith %}
         <form method="post" class="form-card">
-            <label>Pseudo :</label>
-            <input type="text" name="username" required autofocus>
-            <label>Mot de passe :</label>
-            <input type="password" name="password" required>
-            <button type="submit">Se connecter</button>
+            <label>Montant (€) :</label>
+            <input type="number" name="montant" min="1" required>
+            <button type="submit">Faire un don</button>
         </form>
-        <a href="{{ url_for('register') }}" class="secondary-link">Créer un compte</a>
-        <a href="{{ url_for('disclaimer') }}" class="secondary-link">Retourner en arrière</a>
-    </div>
+        <p class="muted">Merci de soutenir la communauté !</p>
+    </main>
 </body>
 </html>

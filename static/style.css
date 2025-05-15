@@ -1,0 +1,105 @@
+/* 
+   TOPAZ v3.3 – Style global (dark, glitch, responsive)
+   Fait avec amour et décadence par iGz
+   Easter egg : l’ombre cache la lumière
+*/
+
+body.dark {
+    background: #111;
+    color: #fafafa;
+    font-family: 'Montserrat', Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+}
+body.glitch {
+    animation: bgGlitch 0.7s linear 3;
+}
+@keyframes bgGlitch {
+    0% { filter: hue-rotate(0deg);}
+    20% { filter: hue-rotate(30deg) blur(2px);}
+    40% { filter: hue-rotate(-30deg) brightness(1.1);}
+    60% { filter: hue-rotate(20deg) contrast(1.4);}
+    80% { filter: hue-rotate(0deg);}
+    100% { filter: none;}
+}
+.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+}
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 100vh;
+    background: #181818;
+    color: #fafafa;
+    padding: 2rem 1rem;
+    border-right: 2px solid #222;
+    box-shadow: 2px 0 16px #0008;
+    z-index: 2;
+}
+.sidebar h2 { margin-bottom: 1rem; font-weight: bold; }
+.sidebar .stats { margin-bottom: 1.5em; }
+.sidebar nav a {
+    display: block;
+    color: #fafafa;
+    text-decoration: none;
+    padding: 0.4em 0.8em;
+    border-radius: 8px;
+    margin: 0.3em 0;
+    transition: background 0.2s, color 0.2s;
+}
+.sidebar nav a:hover, .sidebar nav a.active {
+    background: #242424;
+    font-weight: bold;
+    color: #c6f;
+}
+main {
+    margin-left: 250px;
+    padding: 2rem;
+}
+@media (max-width: 800px) {
+    .sidebar { width: 100vw; height: auto; position: static; border-right: none; box-shadow: none;}
+    main { margin-left: 0; padding: 1rem; }
+}
+input, button, select, textarea {
+    background: #242424;
+    color: #fafafa;
+    border: 1px solid #333;
+    padding: 0.6em;
+    border-radius: 8px;
+    margin: 0.4em 0;
+    font-size: 1em;
+}
+button { font-weight: bold; cursor: pointer; }
+button.danger { background: #a22; color: #fff; }
+button:active, button:focus { outline: 2px solid #a8f; }
+.form-card { display: flex; flex-direction: column; min-width: 260px; gap: 0.7em;}
+.flash .alert { margin-bottom: 0.5em; padding: 0.7em 1em; border-radius: 7px;}
+.alert.success { background: #273; color: #fff;}
+.alert.danger { background: #922; color: #fff;}
+.alert.info { background: #236; color: #fff;}
+.secondary-link { color: #aaa; font-size: 0.9em; margin-left: 1em;}
+table { width: 95%; margin: 1em 0; border-collapse: collapse; background: #1d1d1d;}
+th, td { border: 1px solid #222; padding: 0.4em 1em; text-align: center; }
+th { background: #181818; }
+td.ua { max-width: 160px; word-break: break-all; font-size: 0.95em; color: #bbb;}
+.locked { color: #b44; font-weight: bold; }
+.unlocked { color: #2e4; font-weight: bold; }
+.muted { color: #aaa; font-size: 0.92em; }
+a { transition: color 0.2s; }
+a:hover { color: #c6f; }
+.flash { margin-bottom: 1em; }
+::-webkit-scrollbar { width: 7px; background: #222; }
+::-webkit-scrollbar-thumb { background: #444; border-radius: 7px;}
+/* Easter egg 404/500 : anim sur multi-clic */
+@keyframes pulse {
+    0% { color: #fafafa; }
+    50% { color: #f9c; text-shadow: 0 0 8px #f9c9; }
+    100% { color: #fafafa; }
+}
+.pulse { animation: pulse 0.7s 3; }

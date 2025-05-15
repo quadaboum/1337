@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistiques – Topaz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dark">
+    {% include "sidebar.html" %}
+    <main>
+        <h1>Statistiques de ton parcours</h1>
+        <ul>
+            <li>Niveau actuel : {{ user.level }}</li>
+            <li>Prestige : {{ user.prestige }}</li>
+            <li>Argent possédé : {{ user.money }} €</li>
+            <li>Dons totaux : {{ user.donations }} €</li>
+            <li>Date d’inscription : {{ user.created_at.strftime('%d/%m/%Y') }}</li>
+        </ul>
+    </main>
+</body>
+</html>

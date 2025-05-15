@@ -1,208 +1,99 @@
-Version : v2.5b
+# Topaz – Voie de l'Éclipse v3.3
 
-# Voie de l'Éclipse
-
-Site fictif ésotérique cyberpunk avec :
-- 666 niveaux (dont 665 accessibles)
-- Dashboard admin Topaz
-- Missions, boutique, dons, offrandes, statistiques
-- Protection par session utilisateur
-- Interface responsive compatible PC, iPhone, Android
-- Design sombre avec effets glitchs
-
-## Démarrage
-
-### Installation
-
-### ✅ En local (VPS, Linux, macOS, WSL...)
-
-1. **Cloner le dépôt :**
-   ```bash
-   git clone <ton_repo_git>
-   cd ton_repo_git
-   ```
-
-2. **Créer un environnement virtuel et l’activer :**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-3. **Installer les dépendances :**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Lancer l’application Flask :**
-   ```bash
-   python app.py
-   ```
-   Accède à l’application sur [http://localhost:5000](http://localhost:5000)
+Projet artistique/expérimental de site sectaire fictif basé sur Flask + PostgreSQL, dark mode complet, ultra sécurisé et avec sidebar dynamique.
+Compatible Railway, Docker, ou local (SQLite possible mais non recommandé).
 
 ---
 
-### ☁️ Sur Railway
+## 🚀 Déploiement Railway (PostgreSQL only)
 
-1. **Créer un nouveau projet Railway :** [https://railway.app](https://railway.app)
-
-2. **Déployer un projet depuis GitHub.**
-
-3. **Configurer les variables d’environnement :**
-   - `FLASK_ENV=production`
-   - (Autres variables personnalisées selon besoin)
-
-4. **Railway détectera automatiquement :**
-   - `requirements.txt` (Python)
-   - `Procfile` avec :  
-     ```
-     web: python app.py
-     ```
-
-5. **Connexion PostgreSQL** *(si utilisé)* :
-   - Ajoute Railway PostgreSQL à ton projet
-   - Récupère les variables `PGHOST`, `PGUSER`, `PGPASSWORD`, etc.
-   - Configure la chaîne de connexion dans `app.py`
+1. Clone ou télécharge le projet
+2. Configure Railway :
+   - Ajoute une variable d'environnement `DATABASE_URL` (PostgreSQL fourni par Railway)
+   - Ajoute une variable d'environnement `SECRET_KEY` (random ou laisse vide pour auto-génération)
+3. Déploie
+   - Railway détecte le `Procfile` → `web: gunicorn app:app`
+   - Les dépendances sont dans `requirements.txt`
+   - Initialise la base avec le contenu de `schema.sql` (à exécuter une seule fois)
+4. Premier accès :
+   - Va sur `/register` pour créer un user avec un code d'invitation généré dans le dashboard admin.
+   - Le user "Topaz" est l’admin principal (mot de passe à changer !).
 
 ---
 
-🎉 Tu peux maintenant accéder à ton site déployé depuis Railway, ou en local sur ton VPS.
-### Initialiser la base (optionnel si déjà existante) :
-```
-python init_db.py
-```
+## 🗃️ Structure du projet
 
-### Lancer le serveur :
-```
-python app.py
-```
+    app.py
+    /templates/
+        login.html
+        register.html
+        menu.html
+        missions.html
+        boutique.html
+        don.html
+        offrandes.html
+        statistique.html
+        dashboard.html
+        404.html
+        500.html
+        unauthorized.html
+        disclaimer.html
+        sidebar.html
+    /static/
+        style.css
+    requirements.txt
+    Procfile
+    schema.sql
+    README.md
 
-## Déploiement (ex. Railway, Heroku)
+---
 
-Ajoutez vos variables d’environnement :
-- `PGHOST`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGPORT`
-- `SECRET_KEY`
+## 👾 Easter eggs inclus
 
-## Accès
-- `/` → page d’accueil
-- `/login` / `/register` → avec code d’invitation
-- `/menu` → menu général
-- `/dashboard` → réservé à Topaz
+- Konami code (↑↑↓↓←→←→BA) sur le menu : pop-up “Topaz t’observe 👁️”, effet glitch.
+- Double clic sur le titre : “Le vrai gourou, c’est toi, iGz.” apparaît.
+- 404/500 : Clique 5x sur “Ne risque pas la punition divine” → secret débloqué.
+- CSS : Un message caché dans `style.css`.
+- Admin sidebar : Garde la souris sur "Dashboard" → citation mystique de Topaz.
+- Mode Ultra-Dark : Tape “666” sur la page menu → mode secret activé.
 
+*Modifie ou désactive les easter eggs dans les templates ou le JS selon tes envies.*
 
-## Changelog
-### v3.0
-- Refactor complet du code
-- Décorateur admin mutualisé
-- Injection version/footer/warning centralisée
-- Templates unifiés et sécurisés
-- README, scripts, et logique PostgreSQL propres
+---
 
+## 🛡️ Sécurité et sessions
 
-### v2.5b
-- Lecture dynamique de la version via `version.txt`
-- Interface `/set_version` pour Topaz
-- Badge de version affiché sur toutes les pages HTML
-- Menu latéral restreint à l’admin Topaz uniquement
-- Option de création de codes d’invitation via interface
+- Pages protégées : accès uniquement si connecté (sauf `/`, `/disclaimer`, `/login`, `/register`).
+- Dashboard : réservé à l'admin (user `is_admin = True`)
+- Déconnexion : bouton accessible partout via la sidebar.
+- Protection Topaz : Impossible de supprimer ou downgrader le compte admin principal.
 
+---
 
-## Version 3.1b
-- Sécurisation complète de l'accès admin
-- Ajout d'une page unauthorized.html
-- Redirection propre vers login si non connecté
-- Nettoyage et commentaires dans app.py
-- CSS global appliqué
+## 📦 Commandes utiles (pour développement local)
 
+Lancer en local (SQLite) :
 
-## Version v3.1c
-- Suppression du footer redondant dans disclaimer
-- Footer dynamique avec version dans toutes les pages
-- Ajout des liens : 'Revenir au menu principal' et 'Bafouer son honneur'
-- dashboard.html réparé et fonctionnel
-- Uniformisation du style CSS sauf menu latéral
+    pip install -r requirements.txt
+    export FLASK_APP=app.py
+    flask run
 
+Initialiser la base (si besoin) :
 
-## Version v3.1d
-- Uniformisation du footer sur toutes les pages
-- Ajout automatique de la version depuis version.txt dans le pied de page
-- Liens cohérents selon les pages (publique : "Bafouer son honneur", privée : "Revenir au menu principal")
+    sqlite3 db.sqlite3 < schema.sql
 
+---
 
-## Version v3.1d
-- Footer uniformisé dans toutes les pages (publiques et privées)
-- Ajout automatique du lien vers le menu ou vers le disclaimer
-- Footer affichant version.txt et année 2025 à chaque fois
+## ✨ Modifications & personnalisation
 
+- Tu peux modifier tous les easter eggs dans les fichiers HTML/JS.
+- Sidebar, missions, boutique, progression, tout est personnalisable depuis la base ou les templates.
+- Ajoute tes propres rituels, objets, paliers et animations dans les fichiers correspondants.
 
-## Version v3.1e
-- Correction de la route '/' inaccessible (erreur de endpoint dans before_request)
-- Sécurisation du bloc de restriction d’accès avec fallback robuste
+---
 
+Projet fictif, à ne pas prendre au sérieux. Toute ressemblance avec la réalité serait purement fortuite.
 
-## Version v3.1e
-- Redirection par défaut des pages protégées vers index (au lieu de login)
-- Vérification de la route `/` et de l’accessibilité publique
+---
 
-
-## Version v3.2a
-- Correction des redirections (index par défaut)
-- Ajout du menu latéral pour tous les utilisateurs connectés
-- Intégration des données user (niveau, prestige, nom)
-- Style.css appliqué à login et register
-- Page unauthorized.html accessible à tous
-
-
-## Version v3.2b
-- Suppression du footer et lien inutile dans disclaimer.html
-- Ajout du lien 'Bafouer son honneur' stylisé sur login.html et register.html
-
-
-## Version v3.2b
-- Suppression du lien 'Bafouer son honneur' et du footer dans disclaimer.html
-
-
-## Version v3.2b
-- Suppression du footer statique dans disclaimer
-- Footer versionné dynamique basé sur version.txt dans toutes les pages
-- Injection automatique de {{ version }} dans les templates via context_processor
-
-
-## Version v3.2b
-- Footer déplacé hors du body dans une vraie balise <footer>
-- Suppression des doublons dans disclaimer.html
-- Version dynamique injectée avec Flask ({{ version }}) via context_processor
-
-
-## Version v3.2b
-- Footer déplacé hors du body avec version dynamique depuis version.txt
-- Supprimé footer en double dans disclaimer.html
-- Lien vers le menu principal dans le footer avec style constant (#666)
-- Ajout d’un lien Dashboard visible uniquement par Topaz dans le menu
-
-
-## Version v3.2b
-- Suppression des éléments statiques dans disclaimer
-- Footer dynamique déplacé dans <footer>
-- Texte 'Revenir au menu principal' stylé en bas du footer
-- Footer lié dynamiquement à version.txt
-- Lien admin vers dashboard réservé à Topaz ajouté dans menu
-- Affichage du menu aussi dans /dashboard.html
-
-
-## Version v3.2b
-- Footer déplacé dans <footer> en bas de chaque page
-- Footer dynamique avec version lue depuis version.txt
-- Lien vers menu/disclaimer stylisé dans footer
-- Suppression des doublons dans disclaimer.html
-- Menu avec lien spécial dashboard visible uniquement par Topaz
-
-
-## Version v3.2c
-- Correction du bug 'user is undefined' dans toutes les routes utilisateur
-- Passage automatique de la variable 'user' à tous les templates connectés
-
-
-## Version v3.3
-- Refonte complète de app.py : plus clair, sans erreurs, fonctions centralisées
-- Nettoyage de style.css avec tri logique et animations
-- Variables 'user' et 'version' uniformisées sur toutes les pages
+iGz / Topaz 2025

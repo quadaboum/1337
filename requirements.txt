@@ -1,2 +1,4 @@
-flask
-psycopg2-binary
+Flask
+Flask_SQLAlchemy
+gunicorn
+Werkzeug

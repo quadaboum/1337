@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Offrandes – Topaz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dark">
+    {% include "sidebar.html" %}
+    <main>
+        <h1>Offrandes</h1>
+        <p>Consulte ici l’historique de tes dons et récompenses sacrées.</p>
+        <ul>
+            {% for offrande in user.offrandes %}
+            <li>{{ offrande.date }} : {{ offrande.description }}</li>
+            {% else %}
+            <li>Aucune offrande pour l’instant.</li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>
