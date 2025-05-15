@@ -121,7 +121,7 @@ def missions():
     user_data = cur.fetchone()
     cur.close()
     conn.close()
-    return render_template("missions.html", version=current_version, , prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
+    return render_template("missions.html", user=user, version=current_version)
     user_data = cur.fetchone()
     cur.close()
     conn.close()
