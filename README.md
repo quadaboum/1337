@@ -200,3 +200,9 @@ Ajoutez vos variables d’environnement :
 ## Version v3.2c
 - Correction du bug 'user is undefined' dans toutes les routes utilisateur
 - Passage automatique de la variable 'user' à tous les templates connectés
+
+
+## Version v3.3
+- Refonte complète de app.py : plus clair, sans erreurs, fonctions centralisées
+- Nettoyage de style.css avec tri logique et animations
+- Variables 'user' et 'version' uniformisées sur toutes les pages

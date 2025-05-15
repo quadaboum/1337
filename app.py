@@ -1,20 +1,15 @@
-with open("version.txt") as f:
-    current_version = f.read().strip()
-
 
 from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 import os
 
-# Initialisation de l'application Flask
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "topaz_secret_key")
 
-# --- Fonctions Utilitaires ---
+# --- Utilitaires ---
 
 def get_db_connection():
-    """Connexion sécurisée à la base PostgreSQL via variables d'environnement."""
     return psycopg2.connect(
         host=os.environ.get("PGHOST"),
         database=os.environ.get("PGDATABASE"),
@@ -29,24 +24,25 @@ def is_logged_in():
 def is_admin():
     return session.get("pseudo") == "Topaz"
 
-
 @app.before_request
 def restrict_pages():
-    allowed_endpoints = ['index', 'login', 'register', 'disclaimer', 'static']
-    if request.endpoint and any(request.endpoint.startswith(e) for e in allowed_endpoints):
-        return
-    if not is_logged_in():
-        return redirect(url_for('login'))
+    allowed = ['index', 'login', 'register', 'disclaimer', 'unauthorized', 'static']
+    if not is_logged_in() and request.endpoint not in allowed:
+        return redirect(url_for("index"))
 
-# --- Routes Publiques ---
+# --- Routes publiques ---
 
 @app.route("/")
 def index():
-    return render_template("index.html", version=current_version)
+    return render_template("index.html", version=current_version())
 
 @app.route("/disclaimer")
 def disclaimer():
-    return render_template("disclaimer.html", version=current_version)
+    return render_template("disclaimer.html", version=current_version())
+
+@app.route("/unauthorized")
+def unauthorized():
+    return render_template("unauthorized.html", version=current_version())
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -67,8 +63,7 @@ def login():
             return redirect(url_for("dashboard") if pseudo == "Topaz" else url_for("menu"))
         cur.close()
         conn.close()
-        return "Traversée du portail astral refusée !"
-    return render_template("login.html", version=current_version)
+    return render_template("login.html", version=current_version())
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -77,23 +72,19 @@ def register():
         password = request.form["password"]
         code = request.form["code"]
         if pseudo == "Topaz":
-            return "Topaz ne peut pas être recréé."
+            return "Pseudo réservé"
         conn = get_db_connection()
         cur = conn.cursor()
         cur.execute("SELECT id FROM users WHERE pseudo = %s", (pseudo,))
         if cur.fetchone():
-            cur.close()
-            conn.close()
-            return "Pseudo déjà utilisé"
+            return "Pseudo déjà pris"
         cur.execute("SELECT id FROM invitation_codes WHERE code = %s AND used = FALSE", (code,))
         code_row = cur.fetchone()
         if not code_row:
-            cur.close()
-            conn.close()
-            return "Clé invalide"
-        hashed_pw = generate_password_hash(password)
+            return "Code invalide"
+        hashed = generate_password_hash(password)
         cur.execute("INSERT INTO users (nom, pseudo, password, niveau, used_invitation_code) VALUES (%s, %s, %s, %s, %s)",
-                    (pseudo, pseudo, hashed_pw, 1, code))
+                    (pseudo, pseudo, hashed, 1, code))
         conn.commit()
         cur.execute("SELECT id FROM users WHERE pseudo = %s", (pseudo,))
         user_id = cur.fetchone()[0]
@@ -102,99 +93,55 @@ def register():
         conn.commit()
         cur.close()
         conn.close()
-        session["user_id"] = user_id
-        session["pseudo"] = pseudo
+        session["user_id"], session["pseudo"] = user_id, pseudo
         return redirect(url_for("dashboard") if pseudo == "Topaz" else url_for("menu"))
-    return render_template("register.html", version=current_version)
+    return render_template("register.html", version=current_version())
 
-# --- Routes Utilisateur ---
+# --- Routes privées utilisateur ---
 
-@app.route("/menu")
-def menu():
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
-        user = cur.fetchone()
-        cur.close()
-        conn.close()
-    return render_template("menu.html", version=current_version, user=user)
-
-@app.route("/missions")
-def missions():
+def get_user():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
-    user_data = cur.fetchone()
+    user = cur.fetchone()
     cur.close()
     conn.close()
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
-        user = cur.fetchone()
-        cur.close()
-        conn.close()
-    return render_template("missions.html", user=user, version=current_version)
-    user_data = cur.fetchone()
-    cur.close()
-    conn.close()
-    return render_template("boutique.html", version=current_version)
-    user_data = cur.fetchone()
-    cur.close()
-    conn.close()
-    return render_template("dons.html", version=current_version)
-    user_data = cur.fetchone()
-    cur.close()
-    conn.close()
-    return render_template("offrande.html", version=current_version)
-    user_data = cur.fetchone()
-    cur.close()
-    conn.close()
-    return render_template("statistiques.html", version=current_version)
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT id, pseudo, niveau, prestige, argent, dons, ip_address, user_agent, used_invitation_code FROM users")
-    users = cur.fetchall()
-    cur.execute("SELECT code, used, (SELECT pseudo FROM users WHERE id = invitation_codes.used_by_user_id) FROM invitation_codes")
-    codes = cur.fetchall()
-    cur.close()
-    conn.close()
-    return render_template("dashboard.html", users=users, codes=codes, version=current_version, user=user)
+    return user
 
-# --- Footer Automatique sur pages publiques ---
+@app.route("/menu")
+def menu():
+    return render_template("menu.html", user=get_user(), version=current_version())
 
-@app.after_request
-def inject_footer(response):
-    try:
-        if request.endpoint in ['index', 'login', 'register', 'disclaimer']:
-            content = response.get_data(as_text=True)
-            css = "<style>footer { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 0.8em; color: #666; }</style>"
-            footer_html = "<footer>- La Voie de l'Éclipse™ - Ce site n'est pas réel - 2025 © -</footer>"
-            content = content.replace("</head>", css + "</head>")
-            content = content.replace("</body>", footer_html + "</body>")
-            response.set_data(content)
-    except Exception:
-        pass
-    return response
+@app.route("/missions")
+def missions():
+    return render_template("missions.html", user=get_user(), version=current_version())
 
-# --- Lancement local ---
+@app.route("/boutique")
+def boutique():
+    return render_template("boutique.html", user=get_user(), version=current_version())
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+@app.route("/dons")
+def dons():
+    return render_template("dons.html", user=get_user(), version=current_version())
 
+@app.route("/offrande")
+def offrande():
+    return render_template("offrande.html", user=get_user(), version=current_version())
 
-@app.context_processor
-def inject_version():
-    try:
-        with open("version.txt", "r") as f:
-            version = f.read().strip()
-    except:
-        version = "inconnue"
-    return dict(version=version)
+@app.route("/statistiques")
+def statistiques():
+    return render_template("statistiques.html", user=get_user(), version=current_version())
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
+
+# --- Route Admin ---
 
 @app.route("/dashboard")
 def dashboard():
-    if not is_logged_in() or session.get("pseudo") != "Topaz":
+    if not is_admin():
         return redirect(url_for("unauthorized"))
     conn = get_db_connection()
     cur = conn.cursor()
@@ -204,4 +151,15 @@ def dashboard():
     codes = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template("dashboard.html", users=users, codes=codes, user=session.get('pseudo'), version=current_version)
+    return render_template("dashboard.html", users=users, codes=codes, user=get_user(), version=current_version())
+
+def current_version():
+    try:
+        with open("version.txt", "r", encoding="utf-8") as f:
+            return f.read().strip()
+    except:
+        return "vUnknown"
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
