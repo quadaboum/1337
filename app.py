@@ -1,5 +1,3 @@
-
-# === Chargement de la version ===
 def load_version():
     try:
         with open('version.txt', 'r') as f:
@@ -15,8 +13,6 @@ import os
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "topaz_secret_key")
 
-
-# === Connexion à la base de données PostgreSQL ===
 def get_db_connection():
     return psycopg2.connect(
         host=os.environ.get("PGHOST"),
@@ -26,20 +22,14 @@ def get_db_connection():
         port=os.environ.get("PGPORT", 5432)
     )
 
-
-# === Vérifie si un utilisateur est connecté ===
 def is_logged_in():
     return "user_id" in session
 
-
-# === Redirige si non connecté et tentative d'accès à une page protégée ===
 @app.before_request
 def restrict_pages():
     if not is_logged_in() and request.endpoint not in ['index', 'login', 'register', 'disclaimer', 'static']:
         return redirect(url_for('login'))
 
-
-# === Mise à jour des infos IP/User-Agent ===
 def update_user_metadata(cur, user_id):
     cur.execute(
         "UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s",
@@ -117,12 +107,10 @@ def register():
         return redirect(url_for('dashboard') if pseudo == "Topaz" else url_for('menu'))
     return render_template("register.html")
 
-
-# === Route : Tableau de bord (Topaz uniquement) ===
 @app.route("/dashboard")
 def dashboard():
     if session.get("pseudo") != "Topaz":
-        return "Accès interdit"
+        return render_template("unauthorized.html")
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT id, pseudo, niveau, prestige, argent, dons, ip_address, user_agent, used_invitation_code FROM users")
@@ -169,8 +157,6 @@ def statistiques():
         return redirect("/login")
     return render_template("statistiques.html")
 
-
-# === Déconnexion ===
 @app.route("/logout")
 def logout():
     session.clear()
@@ -181,8 +167,6 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=port, debug=True)
 
 
-
-# === Injection automatique de footer ===
 @app.after_request
 def inject_footer(response):
     try:
@@ -199,6 +183,7 @@ def inject_footer(response):
         pass
     return response
 
+from flask import request
 
 
 
@@ -221,8 +206,6 @@ VERSION_STYLE = """
 
 FOOTER_HTML = f'<div id="app-version">{app.config["VERSION"]}</div>'
 
-
-# === Injection automatique de footer ===
 @app.after_request
 def inject_version(response):
     content_type = response.headers.get('Content-Type', '')
@@ -233,8 +216,6 @@ def inject_version(response):
         response.set_data(html)
     return response
 
-
-# === Redirige si non connecté et tentative d'accès à une page protégée ===
 @app.before_request
 def log_request_info():
     print(f"[{app.config['VERSION']}] ➜ {request.method} {request.path}")

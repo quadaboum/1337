@@ -1,113 +1,36 @@
-## Version 3.2b – Audit & Sécurisation
-- Code `app.py` restructuré avec commentaires clairs
-- Imports nettoyés (suppression doublons)
-- Ajout d’un fichier CSS unique pour toutes les pages
-- Version définie dans `version.txt` = 3.2b
-- Préparation pour Railway avec toutes dépendances prêtes
+# Projet Topaz – v3.0_a
 
-Version : v2.5b
+**La Voie de l'Éclipse** – Un site Flask ritualiste, interactif et progressif, entièrement compatible Railway.
 
-# Voie de l'Éclipse
+## Fonctionnalités principales
 
-Site fictif ésotérique cyberpunk avec :
-- 666 niveaux (dont 665 accessibles)
-- Dashboard admin Topaz
-- Missions, boutique, dons, offrandes, statistiques
-- Protection par session utilisateur
-- Interface responsive compatible PC, iPhone, Android
-- Design sombre avec effets glitchs
+- Authentification avec pseudonyme et invitation
+- Tableau de bord unique pour l'utilisateur `Topaz`
+- Système de progression avec missions, boutique, dons et offrandes
+- Sécurité renforcée : redirection automatique si non connecté
+- Interface stylisée à partir de `disclaimer.html` pour toutes les pages
+- Accès restreint au panel admin avec une page `unauthorized.html` dédiée
 
-## Démarrage
+## Variables d’environnement requises
 
-### Installation
-
-### ✅ En local (VPS, Linux, macOS, WSL...)
-
-1. **Cloner le dépôt :**
-   ```bash
-   git clone <ton_repo_git>
-   cd ton_repo_git
-   ```
-
-2. **Créer un environnement virtuel et l’activer :**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-3. **Installer les dépendances :**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Lancer l’application Flask :**
-   ```bash
-   python app.py
-   ```
-   Accède à l’application sur [http://localhost:5000](http://localhost:5000)
-
----
-
-### ☁️ Sur Railway
-
-1. **Créer un nouveau projet Railway :** [https://railway.app](https://railway.app)
-
-2. **Déployer un projet depuis GitHub.**
-
-3. **Configurer les variables d’environnement :**
-   - `FLASK_ENV=production`
-   - (Autres variables personnalisées selon besoin)
-
-4. **Railway détectera automatiquement :**
-   - `requirements.txt` (Python)
-   - `Procfile` avec :  
-     ```
-     web: python app.py
-     ```
-
-5. **Connexion PostgreSQL** *(si utilisé)* :
-   - Ajoute Railway PostgreSQL à ton projet
-   - Récupère les variables `PGHOST`, `PGUSER`, `PGPASSWORD`, etc.
-   - Configure la chaîne de connexion dans `app.py`
-
----
-
-🎉 Tu peux maintenant accéder à ton site déployé depuis Railway, ou en local sur ton VPS.
-### Initialiser la base (optionnel si déjà existante) :
 ```
-python init_db.py
+PGHOST=
+PGDATABASE=
+PGUSER=
+PGPASSWORD=
+PGPORT=5432
+SECRET_KEY=topaz_secret_key
+PORT=5000
 ```
 
-### Lancer le serveur :
-```
-python app.py
-```
+## Déploiement sur Railway
 
-## Déploiement (ex. Railway, Heroku)
+1. Uploadez tous les fichiers de cette archive
+2. Configurez les variables d’environnement ci-dessus
+3. Initialisez la base PostgreSQL avec `schema.sql`
 
-Ajoutez vos variables d’environnement :
-- `PGHOST`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGPORT`
-- `SECRET_KEY`
-
-## Accès
-- `/` → page d’accueil
-- `/login` / `/register` → avec code d’invitation
-- `/menu` → menu général
-- `/dashboard` → réservé à Topaz
-
-
-## Changelog
-### v3.0
-- Refactor complet du code
-- Décorateur admin mutualisé
-- Injection version/footer/warning centralisée
-- Templates unifiés et sécurisés
-- README, scripts, et logique PostgreSQL propres
-
-
-### v2.5b
-- Lecture dynamique de la version via `version.txt`
-- Interface `/set_version` pour Topaz
-- Badge de version affiché sur toutes les pages HTML
-- Menu latéral restreint à l’admin Topaz uniquement
-- Option de création de codes d’invitation via interface
+## Changements récents
+## Modifications préparatoires à la version 3.2c
+- Ajout d’une page `unauthorized.html` pour empêcher l'accès au dashboard si non-Topaz.
+- Sécurisation de la route `/dashboard`.
+- Préparation au nettoyage final et sécurité générale.
