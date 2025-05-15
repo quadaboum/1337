@@ -65,13 +65,14 @@ def current_user():
         return User.query.get(session["user_id"])
     return None
 
+from sqlalchemy import text
+
 @app.route("/health")
 def health():
     try:
-        db.session.execute("SELECT 1")
+        db.session.execute(text("SELECT 1"))
         return "✅ DB connected!", 200
     except Exception as e:
         return f"❌ DB error: {str(e)}", 500
-
 if __name__ == "__main__":
     app.run(debug=True)
