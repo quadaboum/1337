@@ -103,6 +103,18 @@
             <li>{{ invite.code }}</li>
             {% endfor %}
         </ul>
+
+        <div style="margin-top:2em; font-size:1.1em;">
+            <b>Version :</b> {{ version }}
+            {% if version == "3.3" %}
+                <span style="color:#4df;">(Dernière grosse release)</span>
+            {% endif %}
+            <br>
+            <a href="{{ url_for('static', filename='CHANGELOG.md') }}" target="_blank">
+                Voir le changelog complet
+            </a>
+        </div>
+
     </main>
 </body>
 </html>
