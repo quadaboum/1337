@@ -1,3 +1,17 @@
+## Version 3.3b – Intégration AJAX
+- Ajout d'un fichier JavaScript : `dashboard_ajax.js`
+- Suppression dynamique des utilisateurs via AJAX (fetch DELETE)
+- Ajout automatique dans `dashboard.html` de boutons "Supprimer"
+- Nouvelle route Flask `/delete_user/<int:user_id>` sécurisée (admin uniquement)
+- Version : 3.3b
+
+## Version 3.2b – Audit & Sécurisation
+- Code `app.py` restructuré avec commentaires clairs
+- Imports nettoyés (suppression doublons)
+- Ajout d’un fichier CSS unique pour toutes les pages
+- Version définie dans `version.txt` = 3.2b
+- Préparation pour Railway avec toutes dépendances prêtes
+
 Version : v2.5b
 
 # Voie de l'Éclipse

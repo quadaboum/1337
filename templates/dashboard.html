@@ -50,12 +50,23 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    
+{% for user in users %}
+<tr id="user-row-{{ user[0] }}">
+    <td>{{ user[0] }}</td>
+    <td>{{ user[1] }}</td>
+    <td>{{ user[2] }}</td>
+    <td><button class="delete-user" data-user-id="{{ user[0] }}">Supprimer</button></td>
+</tr>
+{% endfor %}
+</table>
+
 
     <div class="footer">
         &copy; Voie de l'Éclipse – Ceci est un projet fictif. Tous droits inexistants.
     </div>
 {% endif %}
+<script src="{{ url_for('static', filename='js/dashboard_ajax.js') }}"></script>
 </body>
 </html>
 </div>
