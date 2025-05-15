@@ -1,60 +1,8 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>La Voie de l'Éclipse - Accueil</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: #0a0a0a;
-            color: #e0e0e0;
-            font-family: "Courier New", monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-image: radial-gradient(circle at center, #1a1a1a, #000000);
-            text-align: center;
-        }
-        h1 {
-            font-size: 2em;
-            color: #ff4444;
-        }
-        p {
-            max-width: 600px;
-            margin: 1em auto;
-        }
-        .warning-btn {
-            background-color: #ff0000;
-            border: none;
-            color: white;
-            padding: 1em 2em;
-            font-size: 1.2em;
-            cursor: pointer;
-            margin-top: 1em;
-            transition: all 0.3s ease;
-        }
-        .warning-btn:hover {
-            background-color: #cc0000;
-            transform: scale(1.05);
-        }
-        .footer {
-            position: absolute;
-            bottom: 10px;
-            font-size: 0.8em;
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-    <h1>⚠️ AVERTISSEMENT -18 ANS ⚠️</h1>
-    <p>Ce site contient du contenu fictif à caractère violent, sexuel, ésotérique et dérangeant.<br>
-    En cliquant ci-dessous, vous acceptez de céder votre âme à Topaz pour l’éternité.<br>
-    Et de renoncer à vos proches, vos biens et votre libre arbitre. Bonne chance.</p>
-    <button class="warning-btn" onclick="window.location.href='/disclaimer'">
-        Je cède mon âme à Topaz, pour l'éternité, sans possibilité de revenir en arrière.
-    </button>
-    <div class="footer">© La Voie de l'Éclipse – Ceci est un projet fictif</div>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Index – Topaz{% endblock %}
+
+{% block content %}
+<h2>Index</h2>
+<p>Contenu de la page index à compléter.</p>
+{% endblock %}
