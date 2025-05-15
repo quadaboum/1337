@@ -42,11 +42,11 @@ def restrict_pages():
 
 @app.route("/")
 def index():
-    return render_template("index.html", version=current_version, version=current_version)
+    return render_template("index.html", version=current_version)
 
 @app.route("/disclaimer")
 def disclaimer():
-    return render_template("disclaimer.html", version=current_version, version=current_version)
+    return render_template("disclaimer.html", version=current_version)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -68,7 +68,7 @@ def login():
         cur.close()
         conn.close()
         return "Traversée du portail astral refusée !"
-    return render_template("login.html", version=current_version, version=current_version)
+    return render_template("login.html", version=current_version)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -105,13 +105,13 @@ def register():
         session["user_id"] = user_id
         session["pseudo"] = pseudo
         return redirect(url_for("dashboard") if pseudo == "Topaz" else url_for("menu"))
-    return render_template("register.html", version=current_version, version=current_version)
+    return render_template("register.html", version=current_version)
 
 # --- Routes Utilisateur ---
 
 @app.route("/menu")
 def menu():
-    return render_template("menu.html", version=current_version, version=current_version)
+    return render_template("menu.html", version=current_version)
 
 @app.route("/missions")
 def missions():
@@ -178,7 +178,7 @@ def logout():
 @app.route("/dashboard")
 def dashboard():
     if not is_admin():
-        return render_template("unauthorized.html", version=current_version, version=current_version)
+        return render_template("unauthorized.html", version=current_version)
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("SELECT id, pseudo, niveau, prestige, argent, dons, ip_address, user_agent, used_invitation_code FROM users")
