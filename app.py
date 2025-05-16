@@ -151,7 +151,7 @@ def dashboard():
     codes = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template("dashboard.html", user=user, codes=codes, user=get_user(), version=current_version())
+        return render_template("dashboard.html", user=user, codes=codes, version=current_version())
 
 def current_version():
     try:
