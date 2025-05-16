@@ -14,7 +14,7 @@ cur = conn.cursor()
 
 # Exemple de structure minimale (adaptée à ton projet)
 cur.execute("""
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS user (
     id SERIAL PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,

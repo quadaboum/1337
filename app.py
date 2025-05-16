@@ -51,11 +51,11 @@ def login():
         password = request.form["password"]
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT id, password FROM users WHERE pseudo = %s", (pseudo,))
+        cur.execute("SELECT id, password FROM user WHERE pseudo = %s", (pseudo,))
         row = cur.fetchone()
         if row and check_password_hash(row[1], password):
             session["user_id"], session["pseudo"] = row[0], pseudo
-            cur.execute("UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s",
+            cur.execute("UPDATE user SET ip_address = %s, user_agent = %s WHERE id = %s",
                         (request.remote_addr, request.headers.get("User-Agent"), row[0]))
             conn.commit()
             cur.close()
@@ -75,7 +75,7 @@ def register():
             return "Pseudo réservé"
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT id FROM users WHERE pseudo = %s", (pseudo,))
+        cur.execute("SELECT id FROM user WHERE pseudo = %s", (pseudo,))
         if cur.fetchone():
             return "Pseudo déjà pris"
         cur.execute("SELECT id FROM invitation_codes WHERE code = %s AND used = FALSE", (code,))
@@ -83,10 +83,10 @@ def register():
         if not code_row:
             return "Code invalide"
         hashed = generate_password_hash(password)
-        cur.execute("INSERT INTO users (nom, pseudo, password, niveau, used_invitation_code) VALUES (%s, %s, %s, %s, %s)",
+        cur.execute("INSERT INTO user (nom, pseudo, password, niveau, used_invitation_code) VALUES (%s, %s, %s, %s, %s)",
                     (pseudo, pseudo, hashed, 1, code))
         conn.commit()
-        cur.execute("SELECT id FROM users WHERE pseudo = %s", (pseudo,))
+        cur.execute("SELECT id FROM user WHERE pseudo = %s", (pseudo,))
         user_id = cur.fetchone()[0]
         cur.execute("UPDATE invitation_codes SET used = TRUE, used_by_user_id = %s WHERE id = %s",
                     (user_id, code_row[0]))
@@ -102,7 +102,7 @@ def register():
 def get_user():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
+    cur.execute("SELECT niveau, prestige, pseudo FROM user WHERE id = %s", (session.get('user_id'),))
     user = cur.fetchone()
     cur.close()
     conn.close()
@@ -145,13 +145,13 @@ def dashboard():
         return redirect(url_for("unauthorized"))
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT id, pseudo, niveau, prestige, argent, dons, ip_address, user_agent, used_invitation_code FROM users")
-    users = cur.fetchall()
-    cur.execute("SELECT code, used, (SELECT pseudo FROM users WHERE id = invitation_codes.used_by_user_id) FROM invitation_codes")
+    cur.execute("SELECT id, pseudo, niveau, prestige, argent, dons, ip_address, user_agent, used_invitation_code FROM user")
+    user = cur.fetchall()
+    cur.execute("SELECT code, used, (SELECT pseudo FROM user WHERE id = invitation_codes.used_by_user_id) FROM invitation_codes")
     codes = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template("dashboard.html", users=users, codes=codes, user=get_user(), version=current_version())
+    return render_template("dashboard.html", user=user, codes=codes, user=get_user(), version=current_version())
 
 def current_version():
     try:

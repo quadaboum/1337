@@ -1,6 +1,6 @@
 -- Schéma SQL pour Voie de l'Éclipse
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS user (
     id SERIAL PRIMARY KEY,
     nom TEXT,
     pseudo TEXT UNIQUE,
@@ -18,5 +18,5 @@ CREATE TABLE IF NOT EXISTS invitation_codes (
     id SERIAL PRIMARY KEY,
     code TEXT UNIQUE,
     used BOOLEAN DEFAULT FALSE,
-    used_by_user_id INTEGER REFERENCES users(id)
+    used_by_user_id INTEGER REFERENCES user(id)
 );

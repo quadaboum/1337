@@ -12,7 +12,7 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 # Supprimer les tables si elles existent
-tables = ['donations', 'invitation_codes', 'users']
+tables = ['donations', 'invitation_codes', 'user']
 for table in tables:
     cur.execute(f'DROP TABLE IF EXISTS {table} CASCADE;')
 
