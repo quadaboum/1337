@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Disclaimer - La Voie de l'Éclipse</title>
-    <style>
-        body {
+body {
             margin: 0;
             background-color: #0a0a0a;
             color: #e0e0e0;
@@ -50,36 +44,3 @@
             font-size: 0.8em;
             color: #666;
         }
-    </style>
-</head>
-<body>
-    <h1>CHOISIS TA DESTINÉE</h1>
-    <p>Tu as accepté le pacte. Il est temps de te connecter ou de t’enregistrer.<br>
-    Si tu n’as pas de clé, tu n'es pas encore digne.</p>
-    <div class="btn-group">
-        <a class="warning-btn" href="/login">Connexion</a>
-        <a class="warning-btn" href="/register">S'enregistrer</a>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-
-
-
-<footer style="text-align:center; font-size: 0.8em; color: #666;">
-    <div><a href="{{ url_for('disclaimer') }}" style="font-size: 0.8em; color: #666;">Bafouer son honneur</a></div>
-    <div>© La Voie de l'Éclipse – Ceci est un site fictif – v3.2b 2025 –</div>
-</footer>
-
-</body>
-
-
-
-</html>

@@ -1,42 +1,111 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <meta charset="UTF-8">
-    <title>Missions – Topaz</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Missions - Voie de l'Éclipse</title>
+    <style>
+        body {
+            background-color: #0e0e0e;
+            color: #f5f5f5;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 40px;
+        }
+        h1 {
+            color: #ff0055;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .content {
+            max-width: 800px;
+            margin: auto;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        .section {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 0 10px #000;
+        }
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+        }
+    
+@media only screen and (max-width: 768px) {
+    body {
+        padding: 20px;
+    }
+    .content {
+        padding: 10px;
+        font-size: 15px;
+    }
+    .section {
+        padding: 15px;
+    }
+}
+
+</style>
 </head>
-<body class="dark">
-    {% include "sidebar.html" %}
-    <main>
-        <h1>Missions de la Voie</h1>
-        <table>
-            <tr>
-                <th>Nom</th>
-                <th>Rituel</th>
-                <th>Coût</th>
-                <th>Prestige requis</th>
-                <th>Statut</th>
-            </tr>
-            {% for mission in missions %}
-            <tr>
-                <td>{{ mission.nom }}</td>
-                <td>{{ mission.rituel }}</td>
-                <td>{{ mission.cout }}€</td>
-                <td>{{ mission.prestige }}</td>
-                <td>
-                    {% if user.level >= mission.level_requis %}
-                        <span class="unlocked">Débloqué</span>
-                    {% else %}
-                        <span class="locked">Verrouillé</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="5">Pas encore de mission dans la base.</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </main>
+<body>
+
+{% if user %}
+<div class="menu">
+    <h2>VOIE DE L'ÉCLIPSE</h2>
+    <div class="stat">Niveau : {{ user[0] }}<br>Prestige : {{ user[1] }}<br>Nom : {{ user[2] }}</div>
+    <a href="/menu">Accueil</a>
+    <a href="/missions">Missions</a>
+    <a href="/boutique">Boutique</a>
+    <a href="/dons">Dons</a>
+    <a href="/offrande">Offrande</a>
+    <a href="/statistiques">Statistiques</a>
+    <a href="/logout">Se déconnecter</a>
+</div>
+{% endif %}
+
+    <h1>Missions</h1>
+    <div class="content">
+        <div class="section">
+            <p>Les missions sont des actes de transgression et de dévotion. Chaque action vous élève et vous marque. Vous ne pouvez en accomplir que celles qui correspondent à votre niveau.</p>
+            <ul>
+                <li>Niveau 1 : Observer la douleur d'un autre en silence</li>
+                <li>Niveau 2 : Écrire vos regrets sur un mur public</li>
+                <li>Niveau 3 : Brûler symboliquement un souvenir</li>
+                <li>Niveau 5 : Voler un objet inutile mais interdit</li>
+                <li>Niveau 8 : Mentir à un proche au nom de la Voie</li>
+            </ul>
+        </div>
+        
+    
+<div style="text-align: center; margin-top: 40px;">
+    <a href="/menu" style="color: #ff0055; text-decoration: none; font-weight: bold;">← Retour au menu</a>
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<footer style="text-align:center; font-size: 0.8em; color: #666;">
+    <div><a href="{{ url_for('menu') }}" style="font-size: 0.8em; color: #666;">Revenir au menu principal</a></div>
+    <div>© La Voie de l'Éclipse – Ceci est un site fictif – v3.2b 2025 –</div>
+</footer>
+
 </body>
+
+
+
 </html>

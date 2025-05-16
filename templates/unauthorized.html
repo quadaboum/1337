@@ -1,15 +1,32 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Accès interdit – Topaz</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Accès refusé</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="dark">
-    <div class="centered">
-        <h1>Ne risque pas la punition divine !</h1>
-        <p>Tu n’as pas accès à cette page.<br>
-        <a href="{{ url_for('menu') }}">Retour au menu</a>
-    </div>
+<body>
+    <h1>🚫 Accès non autorisé</h1>
+    <p>Tu n’as pas encore atteint le bon niveau d’illumination pour voir cette page.</p>
+    <a href="{{ url_for('index') }}">Retour à l’accueil</a>
+
+
+
+
+
+
+
+
+
+
+
+
+<footer style="text-align:center; font-size: 0.8em; color: #666;">
+    <div><a href="{{ url_for('disclaimer') }}" style="font-size: 0.8em; color: #666;">Bafouer son honneur</a></div>
+    <div>© La Voie de l'Éclipse – Ceci est un site fictif – v3.2b 2025 –</div>
+</footer>
+
 </body>
+
+
+
 </html>

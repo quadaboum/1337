@@ -1,248 +1,165 @@
-import os
-import secrets
-from flask import Flask, render_template, redirect, url_for, session, request, flash, abort
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+
+from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
-from sqlalchemy import text
+import psycopg2
+import os
 
-# 🚀 Debug info for Railway
-print("🚀 Booting app.py")
-print("🔍 DATABASE_URL:", os.environ.get("DATABASE_URL"))
-
-# ⚙️ Flask App Init
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ['SECRET_KEY']  # 🔐 MUST be set in Railway variables
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = os.environ.get("SECRET_KEY", "topaz_secret_key")
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+# --- Utilitaires ---
 
-# 🔎 Version context
-def get_version():
-    try:
-        with open("version.txt", "r") as f:
-            return f.read().strip()
-    except Exception:
-        return "?"
+def get_db_connection():
+    return psycopg2.connect(
+        host=os.environ.get("PGHOST"),
+        database=os.environ.get("PGDATABASE"),
+        user=os.environ.get("PGUSER"),
+        password=os.environ.get("PGPASSWORD"),
+        port=os.environ.get("PGPORT", 5432)
+    )
 
-@app.context_processor
-def inject_version():
-    return {"version": get_version()}
+def is_logged_in():
+    return "user_id" in session
 
-# 🧬 Models
-class User(db.Model):
-    __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    level = db.Column(db.Integer, default=1)
-    prestige = db.Column(db.Integer, default=0)
-    last_ip = db.Column(db.String(100))
-    user_agent = db.Column(db.String(300))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    is_admin = db.Column(db.Boolean, default=False)
-    money = db.Column(db.Integer, default=0)
-    invite_code = db.Column(db.String(16), unique=True)
-    donations = db.Column(db.Integer, default=0)
+def is_admin():
+    return session.get("pseudo") == "Topaz"
 
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+@app.before_request
+def restrict_pages():
+    allowed = ['index', 'login', 'register', 'disclaimer', 'unauthorized', 'static']
+    if not is_logged_in() and request.endpoint not in allowed:
+        return redirect(url_for("index"))
 
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+# --- Routes publiques ---
 
-class Invite_Code(db.Model):
-    __tablename__ = "invite_code"
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(16), unique=True, nullable=False)
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    is_used = db.Column(db.Boolean, default=False)
-    used_at = db.Column(db.DateTime, nullable=True)
-    used_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-
-# 🛡️ Auth Helpers
-def current_user():
-    if "user_id" in session:
-        return User.query.get(session["user_id"])
-    return None
-
-def require_login(f):
-    from functools import wraps
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not current_user():
-            return redirect(url_for('disclaimer'))
-        return f(*args, **kwargs)
-    return decorated
-
-def require_admin(f):
-    from functools import wraps
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        user = current_user()
-        if not user or not user.is_admin:
-            return render_template("unauthorized.html")
-        return f(*args, **kwargs)
-    return decorated
-
-# 🌐 Routes
 @app.route("/")
 def index():
-    return render_template("disclaimer.html")
+    return render_template("index.html", version=current_version())
 
 @app.route("/disclaimer")
 def disclaimer():
-    return render_template("disclaimer.html")
+    return render_template("disclaimer.html", version=current_version())
+
+@app.route("/unauthorized")
+def unauthorized():
+    return render_template("unauthorized.html", version=current_version())
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user = User.query.filter_by(username=request.form["username"]).first()
-        if user and user.check_password(request.form["password"]):
-            session["user_id"] = user.id
-            user.last_ip = request.remote_addr
-            user.user_agent = request.headers.get('User-Agent')
-            db.session.commit()
-            flash("Connexion réussie", "success")
-            return redirect(url_for("menu"))
-        else:
-            flash("Identifiants invalides", "danger")
-    return render_template("login.html")
+        pseudo = request.form["pseudo"]
+        password = request.form["password"]
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT id, password FROM users WHERE pseudo = %s", (pseudo,))
+        row = cur.fetchone()
+        if row and check_password_hash(row[1], password):
+            session["user_id"], session["pseudo"] = row[0], pseudo
+            cur.execute("UPDATE users SET ip_address = %s, user_agent = %s WHERE id = %s",
+                        (request.remote_addr, request.headers.get("User-Agent"), row[0]))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return redirect(url_for("dashboard") if pseudo == "Topaz" else url_for("menu"))
+        cur.close()
+        conn.close()
+    return render_template("login.html", version=current_version())
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        if User.query.filter_by(username=request.form["username"]).first():
-            flash("Ce pseudo est déjà pris.", "danger")
-            return redirect(url_for("register"))
-        invite = InviteCode.query.filter_by(code=request.form["invite_code"]).first()
-        if not invite:
-            flash("Code d'invitation invalide.", "danger")
-            return redirect(url_for("register"))
-        new_user = User(
-            username=request.form["username"],
-            level=1, prestige=0, is_admin=False,
-            invite_code=request.form["invite_code"])
-        new_user.set_password(request.form["password"])
-        db.session.add(new_user)
-        db.session.commit()
-        flash("Inscription réussie, connecte-toi !", "success")
-        return redirect(url_for("login"))
-    return render_template("register.html")
+        pseudo = request.form["pseudo"]
+        password = request.form["password"]
+        code = request.form["code"]
+        if pseudo == "Topaz":
+            return "Pseudo réservé"
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM users WHERE pseudo = %s", (pseudo,))
+        if cur.fetchone():
+            return "Pseudo déjà pris"
+        cur.execute("SELECT id FROM invitation_codes WHERE code = %s AND used = FALSE", (code,))
+        code_row = cur.fetchone()
+        if not code_row:
+            return "Code invalide"
+        hashed = generate_password_hash(password)
+        cur.execute("INSERT INTO users (nom, pseudo, password, niveau, used_invitation_code) VALUES (%s, %s, %s, %s, %s)",
+                    (pseudo, pseudo, hashed, 1, code))
+        conn.commit()
+        cur.execute("SELECT id FROM users WHERE pseudo = %s", (pseudo,))
+        user_id = cur.fetchone()[0]
+        cur.execute("UPDATE invitation_codes SET used = TRUE, used_by_user_id = %s WHERE id = %s",
+                    (user_id, code_row[0]))
+        conn.commit()
+        cur.close()
+        conn.close()
+        session["user_id"], session["pseudo"] = user_id, pseudo
+        return redirect(url_for("dashboard") if pseudo == "Topaz" else url_for("menu"))
+    return render_template("register.html", version=current_version())
+
+# --- Routes privées utilisateur ---
+
+def get_user():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT niveau, prestige, pseudo FROM users WHERE id = %s", (session.get('user_id'),))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+    return user
+
+@app.route("/menu")
+def menu():
+    return render_template("menu.html", user=get_user(), version=current_version())
+
+@app.route("/missions")
+def missions():
+    return render_template("missions.html", user=get_user(), version=current_version())
+
+@app.route("/boutique")
+def boutique():
+    return render_template("boutique.html", user=get_user(), version=current_version())
+
+@app.route("/dons")
+def dons():
+    return render_template("dons.html", user=get_user(), version=current_version())
+
+@app.route("/offrande")
+def offrande():
+    return render_template("offrande.html", user=get_user(), version=current_version())
+
+@app.route("/statistiques")
+def statistiques():
+    return render_template("statistiques.html", user=get_user(), version=current_version())
 
 @app.route("/logout")
 def logout():
-    session.pop("user_id", None)
-    flash("Déconnecté.", "info")
-    return redirect(url_for("disclaimer"))
+    session.clear()
+    return redirect(url_for("index"))
 
-@app.route("/menu")
-@require_login
-def menu():
-    user = current_user()
-    return render_template("menu.html", user=user)
-
-@app.route("/missions")
-@require_login
-def missions():
-    user = current_user()
-    return render_template("missions.html", user=user)
-
-@app.route("/boutique")
-@require_login
-def boutique():
-    user = current_user()
-    return render_template("boutique.html", user=user)
-
-@app.route("/don", methods=["GET", "POST"])
-@require_login
-def don():
-    user = current_user()
-    if request.method == "POST":
-        montant = int(request.form["montant"])
-        user.donations += montant
-        user.money -= montant
-        db.session.commit()
-        flash(f"Merci pour ton don de {montant}€ !", "success")
-    return render_template("don.html", user=user)
-
-@app.route("/offrandes")
-@require_login
-def offrandes():
-    user = current_user()
-    return render_template("offrandes.html", user=user)
-
-@app.route("/statistique")
-@require_login
-def statistique():
-    user = current_user()
-    return render_template("statistique.html", user=user)
+# --- Route Admin ---
 
 @app.route("/dashboard")
-@require_admin
 def dashboard():
-    users = User.query.all()
-    invites = InviteCode.query.all()
-    stats = {
-        "user_count": User.query.count(),
-        "level_avg": round(db.session.query(db.func.avg(User.level)).scalar() or 1, 1),
-        "prestige_total": db.session.query(db.func.sum(User.prestige)).scalar() or 0,
-    }
-    return render_template(
-        "dashboard.html",
-        user=current_user(),
-        users=users,
-        invites=invites,
-        stats=stats
-    )
+    if not is_admin():
+        return redirect(url_for("unauthorized"))
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id, pseudo, niveau, prestige, argent, dons, ip_address, user_agent, used_invitation_code FROM users")
+    users = cur.fetchall()
+    cur.execute("SELECT code, used, (SELECT pseudo FROM users WHERE id = invitation_codes.used_by_user_id) FROM invitation_codes")
+    codes = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template("dashboard.html", users=users, codes=codes, user=get_user(), version=current_version())
 
-@app.route("/generate_invite", methods=["POST"])
-@require_admin
-def generate_invite():
-    code = secrets.token_hex(8)
-    new_invite = InviteCode(code=code, created_by=current_user().id)
-    db.session.add(new_invite)
-    db.session.commit()
-    flash(f"Code généré : {code}", "success")
-    return redirect(url_for("dashboard"))
-
-@app.route("/delete_user/<int:user_id>", methods=["POST"])
-@require_admin
-def delete_user(user_id):
-    user = User.query.get_or_404(user_id)
-    if user.username == "Topaz":
-        flash("Impossible de supprimer le demi-dieu !", "danger")
-        return redirect(url_for("dashboard"))
-    db.session.delete(user)
-    db.session.commit()
-    flash("Utilisateur supprimé.", "info")
-    return redirect(url_for("dashboard"))
-
-# 🧪 Health Check
-@app.route("/health")
-def health():
+def current_version():
     try:
-        db.session.execute(text("SELECT 1"))
-        return "✅ DB connected!", 200
-    except Exception as e:
-        return f"❌ DB error: {str(e)}", 500
+        with open("version.txt", "r", encoding="utf-8") as f:
+            return f.read().strip()
+    except:
+        return "vUnknown"
 
-# 🛑 Error Handlers
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
-@app.errorhandler(401)
-def unauthorized(e):
-    return render_template('unauthorized.html'), 401
-
-@app.errorhandler(500)
-def internal_error(e):
-    return render_template('500.html'), 500
-
-# 🎯 Local run fallback
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
