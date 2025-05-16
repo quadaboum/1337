@@ -35,7 +35,25 @@ def restrict_pages():
 # --- Routes publiques ---
 
 
+
+
 @app.context_processor
+def inject_version():
+    try:
+        with open("version.txt") as f:
+            version = f.read().strip()
+            return dict(version=version)
+    except Exception:
+        return dict(version="Inconnue")
+def inject_version():
+    try:
+        with open("version.txt") as f:
+            lines = [l.strip() for l in f.readlines()]
+            annee = lines[0] if lines else "Inconnue"
+            version = lines[1] if len(lines) > 1 else "Inconnue"
+            return dict(annee=annee, version=version)
+    except Exception:
+        return dict(annee="Inconnue", version="Inconnue")
 def inject_version():
     try:
         with open("version.txt") as f:
