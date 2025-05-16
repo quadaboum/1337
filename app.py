@@ -34,6 +34,14 @@ def restrict_pages():
 
 # --- Routes publiques ---
 
+
+@app.context_processor
+def inject_version():
+    try:
+        with open("version.txt") as f:
+            return dict(version=f.read().strip())
+    except Exception:
+        return dict(version="Inconnue")
 @app.route("/")
 def index():
     return render_template("index.html", version=current_version())
