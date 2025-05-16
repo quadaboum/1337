@@ -2,6 +2,7 @@ import os
 import secrets
 from flask import Flask, render_template, redirect, url_for, session, request, flash, abort
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy import text
@@ -17,6 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # 🔎 Version context
 def get_version():
@@ -32,6 +34,7 @@ def inject_version():
 
 # 🧬 Models
 class User(db.Model):
+    __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
@@ -51,10 +54,14 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-class InviteCode(db.Model):
+class Invite_Code(db.Model):
+    __tablename__ = "invite_code"
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(16), unique=True, nullable=False)
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    is_used = db.Column(db.Boolean, default=False)
+    used_at = db.Column(db.DateTime, nullable=True)
+    used_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
 # 🛡️ Auth Helpers
 def current_user():
